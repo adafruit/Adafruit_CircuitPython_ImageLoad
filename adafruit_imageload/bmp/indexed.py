@@ -48,7 +48,7 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
         while colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
-        bitmap = bitmap(width, height, minimum_color_depth)
+        bitmap = bitmap(width, height, colors)
         f.seek(data_start)
         line_size = width // (8 // color_depth)
         if line_size % 4 != 0:
