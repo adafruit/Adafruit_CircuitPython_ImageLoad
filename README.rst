@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_ImageLoad.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_ImageLoad
+.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_ImageLoad.svg?branch=master
+    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_ImageLoad
     :alt: Build Status
 
 This library decodes an image file into new bitmap and palette objects of the provided type. It's
