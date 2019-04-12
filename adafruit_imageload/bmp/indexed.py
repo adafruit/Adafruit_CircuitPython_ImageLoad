@@ -54,30 +54,16 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
         if line_size % 4 != 0:
             line_size += (4 - line_size % 4)
 
-        packed_pixels = None
-        if color_depth != minimum_color_depth and minimum_color_depth == 2:
-            target_line_size = width // 4
-            if target_line_size % 4 != 0:
-                target_line_size += (4 - target_line_size % 4)
+        chunk = bytearray(line_size)
 
-            packed_pixels = bytearray(target_line_size)
+        for y in range(height-1,-1,-1):
+            f.readinto(chunk)
+            pixels_per_byte = 8 // color_depth
+            offset = y * width
 
-        for line in range(height-1,-1,-1):
-            chunk = f.read(line_size)
-            if packed_pixels:
-                original_pixels_per_byte = 8 // color_depth
-                packed_pixels_per_byte = 8 // minimum_color_depth
-
-                for i in range(width // packed_pixels_per_byte):
-                    packed_pixels[i] = 0
-
-                for i in range(width):
-                    pi = i // packed_pixels_per_byte
-                    ci = i // original_pixels_per_byte
-                    packed_pixels[pi] |= ((chunk[ci] >> (8 - color_depth*(i % original_pixels_per_byte + 1))) & 0x3) << (8 - minimum_color_depth*(i % packed_pixels_per_byte + 1))
-
-                bitmap._load_row(line, packed_pixels)
-            else:
-                bitmap._load_row(line, chunk)
+            for x in range(width):
+                ci = x // pixels_per_byte
+                pixel = (chunk[ci] >> (8 - color_depth*(x % pixels_per_byte + 1))) & ((1 << minimum_color_depth) - 1)
+                bitmap[offset + x] = pixel
 
     return bitmap, palette
