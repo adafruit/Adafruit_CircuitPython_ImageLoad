@@ -32,16 +32,22 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-import math
+def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
+    """Loads indexed bitmap data into bitmap and palette objects.
 
-def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
+       :param file file: The open bmp file
+       :param int width: Image width in pixels
+       :param int height: Image height in pixels
+       :param int data_start: Byte location where the data starts (after headers)
+       :param int colors: Number of distinct colors in the image
+       :param int color_depth: Number of bits used to store a value"""
+    # pylint: disable=too-many-arguments,too-many-locals
     if palette:
         palette = palette(colors)
 
-        f.seek(data_start - colors * 4)
-        for color in range(colors):
-            c = f.read(4)
-            palette[color] = c
+        file.seek(data_start - colors * 4)
+        for value in range(colors):
+            palette[value] = file.read(4)
 
     if bitmap:
         minimum_color_depth = 1
@@ -49,21 +55,22 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
             minimum_color_depth *= 2
 
         bitmap = bitmap(width, height, colors)
-        f.seek(data_start)
+        file.seek(data_start)
         line_size = width // (8 // color_depth)
         if line_size % 4 != 0:
             line_size += (4 - line_size % 4)
 
         chunk = bytearray(line_size)
+        mask = (1 << minimum_color_depth) - 1
 
-        for y in range(height-1,-1,-1):
-            f.readinto(chunk)
+        for y in range(height - 1, -1, -1):
+            file.readinto(chunk)
             pixels_per_byte = 8 // color_depth
             offset = y * width
 
             for x in range(width):
-                ci = x // pixels_per_byte
-                pixel = (chunk[ci] >> (8 - color_depth*(x % pixels_per_byte + 1))) & ((1 << minimum_color_depth) - 1)
+                i = x // pixels_per_byte
+                pixel = (chunk[i] >> (8 - color_depth*(x % pixels_per_byte + 1))) & mask
                 bitmap[offset + x] = pixel
 
     return bitmap, palette
