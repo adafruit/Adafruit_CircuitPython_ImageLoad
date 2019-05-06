@@ -41,9 +41,7 @@ def load(f, header, *, bitmap=None, palette=None):
     while True:
         # We have all we need at length 3
         if len(pnm_header) == 3:
-            test_byte = f.read(1)
-            if test_byte.isdigit():
-                raise RuntimeError("Not supporting 16-bit colors at this time")
+            f.read(1)
             break
         if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
             if len(pnm_header) == 2:
@@ -63,16 +61,16 @@ def load(f, header, *, bitmap=None, palette=None):
                 if next_byte == b"\n":
                     break
         if next_byte.isdigit():
-            value = bytesarray()
+            value = bytearray()
             while True:
                 if not next_byte.isdigit():
                     break
-                value.append(next_byte)
+                value += next_byte
                 next_byte = f.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
 
-            pnm_header.append(int.from_bytes(value, "big"))
+            pnm_header.append(int(value))
             continue
 
         if not next_byte:
