@@ -63,7 +63,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 if next_byte != b"\n":
                     break
         if next_byte.isdigit():
-            pnm_header.append(next_byte)
+            pnm_header.append(int.from_bytes(next_byte, "big"))
             continue
 
         if not next_byte:
@@ -75,11 +75,12 @@ def load(f, header, *, bitmap=None, palette=None):
         return pgm.load(
             f, magic_number, pnm_header, bitmap=bitmap, palette=palette
         )
-    elif magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
+
+    if magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
         from . import ppm
 
         return ppm.load(
             f, magic_number, pnm_header, bitmap=bitmap, palette=palette
         )
-    else:
-        raise RuntimeError("Unsupported image format")
+
+    raise RuntimeError("Unsupported image format")
