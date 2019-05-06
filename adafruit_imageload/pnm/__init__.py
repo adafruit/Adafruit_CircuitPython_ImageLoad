@@ -43,9 +43,13 @@ def load(f, header, *, bitmap=None, palette=None):
     while True:
         # We have all we need at length 3
         if len(pnm_header) == 3:
+            test_byte = f.read(1)
+            if test_byte.isdigit():
+                raise RuntimeError("Not supporting 16-bit colors at this time")
             break
         if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
             if len(pnm_header) == 2:
+                f.read(1)
                 from . import pbm
 
                 return pbm.load(
