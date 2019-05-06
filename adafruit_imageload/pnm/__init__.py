@@ -63,7 +63,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 if next_byte == b"\n":
                     break
         if next_byte.isdigit():
-            pnm_header.append(int.from_bytes(next_byte, "big"))
+            pnm_header.append(int(next_byte))
             continue
 
         if not next_byte:
