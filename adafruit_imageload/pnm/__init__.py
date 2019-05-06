@@ -28,23 +28,53 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-# spec https://en.wikipedia.org/wiki/Netpbm_format
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
+
+import re
 
 
 def load(f, header, *, bitmap=None, palette=None):
     # Read the header
     magic_number = header[:2]
-    if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
-        from . import pbm
+    f.seek(2)
+    pnm_header = []
+    while True:
+        # We have all we need at length 3
+        if len(pnm_header) == 3:
+            break
+        if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
+            if len(pnm_header) == 2:
+                from . import pbm
 
-        return pbm.load(f, magic_number, bitmap=bitmap, palette=palette)
-    elif magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
+                return pbm.load(
+                    f, magic_number, pnm_header, bitmap=bitmap, palette=palette
+                )
+
+        next_byte = f.read(1)
+        if next_byte == b"#":
+            if next_byte != b"\n":
+                continue
+        dec_re = re.compile(r"\d")
+        if dec_re.match(next_byte):
+            pnm_header.append(next_byte)
+            continue
+
+        if not next_byte:
+            raise RuntimeError("Unsupported image format")
+
+    if magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
         from . import pgm
 
-        return pgm.load(f, magic_number, bitmap=bitmap, palette=palette)
+        return pgm.load(
+            f, magic_number, pnm_header, bitmap=bitmap, palette=palette
+        )
     elif magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
         from . import ppm
 
-        return ppm.load(f, magic_number, bitmap=bitmap, palette=palette)
+        return ppm.load(
+            f, magic_number, pnm_header, bitmap=bitmap, palette=palette
+        )
     else:
         raise RuntimeError("Unsupported image format")
