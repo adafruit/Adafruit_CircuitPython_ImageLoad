@@ -52,7 +52,7 @@ def load(filename, *, bitmap=None, palette=None):
         elif header.startswith(b"P"):
             from . import pnm
 
-            pass
+            return pnm.load(f, header, bitmap=bitmap, palette=palette)
         else:
             raise RuntimeError("Unsupported image format")
 
