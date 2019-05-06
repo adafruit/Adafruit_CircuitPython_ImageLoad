@@ -30,17 +30,21 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 """
 # spec https://en.wikipedia.org/wiki/Netpbm_format
 
-def load(f, header, *):
+
+def load(f, header, *, bitmap=None, palette=None):
     # Read the header
     magic_number = header[:2]
-    if magic_number.startswith(b'P1') or magic_number.startswith(b'P4'):
+    if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
         from . import pbm
-        return pbm.load(f, magic_number)
-    elif magic_number.startswith(b'P2') or magic_number.startswith(b'P5'):
+
+        return pbm.load(f, magic_number, bitmap=bitmap, palette=palette)
+    elif magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
         from . import pgm
-        return pgm.load(f, magic_number)
-    elif magic_number.startswith(b'P3') or magic_number.startswith(b'P6'):
+
+        return pgm.load(f, magic_number, bitmap=bitmap, palette=palette)
+    elif magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
         from . import ppm
-        return ppm.load(f, magic_number)
+
+        return ppm.load(f, magic_number, bitmap=bitmap, palette=palette)
     else:
         raise RuntimeError("Unsupported image format")
