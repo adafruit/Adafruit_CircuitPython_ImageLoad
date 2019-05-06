@@ -60,7 +60,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 f.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
-                if next_byte != b"\n":
+                if next_byte == b"\n":
                     break
         if next_byte.isdigit():
             pnm_header.append(int.from_bytes(next_byte, "big"))
