@@ -63,11 +63,11 @@ def load(f, header, *, bitmap=None, palette=None):
                 if next_byte == b"\n":
                     break
         if next_byte.isdigit():
-            value = b""
+            value = bytesarray()
             while True:
                 if not next_byte.isdigit():
                     break
-                value += next_byte
+                value.append(next_byte)
                 next_byte = f.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
