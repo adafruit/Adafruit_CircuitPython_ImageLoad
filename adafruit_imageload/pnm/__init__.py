@@ -56,8 +56,7 @@ def load(f, header, *, bitmap=None, palette=None):
         if next_byte == b"#":
             if next_byte != b"\n":
                 continue
-        dec_re = re.compile(r"\d")
-        if dec_re.match(next_byte):
+        if next_byte.isdigit():
             pnm_header.append(next_byte)
             continue
 
