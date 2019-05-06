@@ -32,8 +32,6 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-import math
-
 def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
     if palette:
         palette = palette(colors)

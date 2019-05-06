@@ -46,7 +46,6 @@ def load(f, *, bitmap=None, palette=None):
     f.seek(46)
     colors = int.from_bytes(f.read(4), 'little')
 
-    compute_palette = False
     if colors == 0 and color_depth >= 16:
         raise NotImplementedError("True color BMP unsupported")
     else:
