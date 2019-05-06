@@ -20,39 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload`
+`adafruit_imageload.pnm`
 ====================================================
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
-* Author(s): Scott Shawcroft
+* Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
+# spec https://en.wikipedia.org/wiki/Netpbm_format
 
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
-
-
-def load(filename, *, bitmap=None, palette=None):
-    """Load pixel values (indices or colors) into a bitmap and colors into a palette.
-
-       bitmap is the desired type. It must take width, height and color_depth in the constructor. It
-       must also have a _load_row method to load a row's worth of pixel data.
-
-       palette is the desired pallete type. The constructor should take the number of colors and
-       support assignment to indices via [].
-    """
-    with open(filename, "rb") as f:
-        header = f.read(3)
-        f.seek(0)
-        if header.startswith(b"BM"):
-            from . import bmp
-
-            return bmp.load(f, bitmap=bitmap, palette=palette)
-        elif header.startswith(b"P"):
-            from . import pnm
-
-            pass
-        else:
-            raise RuntimeError("Unsupported image format")
-
+def load(f, header, *):
+    # Read the header
+    magic_number = header[:2]
+    if magic_number.startswith(b'P1') or magic_number.startswith(b'P4'):
+        from . import pbm
+        return pbm.load(f, magic_number)
+    elif magic_number.startswith(b'P2') or magic_number.startswith(b'P5'):
+        from . import pgm
+        return pgm.load(f, magic_number)
+    elif magic_number.startswith(b'P3') or magic_number.startswith(b'P6'):
+        from . import ppm
+        return ppm.load(f, magic_number)
+    else:
+        raise RuntimeError("Unsupported image format")
