@@ -57,7 +57,7 @@ def load(f, header, *, bitmap=None, palette=None):
         next_byte = f.read(1)
         if next_byte == b"#":
             while True:
-                f.read(1)
+                next_byte = f.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
                 if next_byte == b"\n":
