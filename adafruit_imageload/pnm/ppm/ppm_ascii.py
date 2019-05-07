@@ -33,11 +33,13 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+import struct
+
 
 def load(file, width, height, max_colors, bitmap=None, palette=None):
     """Load an ascii ppm into the Bitmap object"""
     if bitmap:
-        for y in range(height - 1):
+        for y in range(height):
             offset = y * width
             for x in range(width):
                 triplet = []
@@ -52,7 +54,11 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                         triplet.append(color)
                         color = bytearray()
                         continue
-
-                bitmap[offset + x] = b"".join(triplet)
+                pixel = bytearray()
+                # This won't work
+                struct.pack_into(
+                    "h", pixel, triplet[0], triplet[1], triplet[2]
+                )
+                bitmap[offset + x] = pixel
 
     return bitmap, palette
