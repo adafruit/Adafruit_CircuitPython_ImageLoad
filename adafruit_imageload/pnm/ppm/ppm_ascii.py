@@ -55,9 +55,13 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                         color = bytearray()
                         continue
                 pixel = bytearray()
-                # This won't work
+                # This just became 8-bit only...
                 struct.pack_into(
-                    "h", pixel, triplet[0], triplet[1], triplet[2]
+                    "BBB",
+                    pixel,
+                    int(triplet[0]),
+                    int(triplet[1]),
+                    int(triplet[2]),
                 )
                 bitmap[offset + x] = pixel
 
