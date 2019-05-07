@@ -58,9 +58,6 @@ def load(file, magic_number, header, bitmap=None, palette=None):
 
         line_size = (width * max_colors) // 8
 
-        if line_size % 4 != 0:
-            line_size += 4 - line_size % 4
-
         chunk = bytearray(line_size)
 
         for y in range(height):
