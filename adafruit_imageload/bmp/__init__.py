@@ -32,19 +32,19 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(f, *, bitmap=None, palette=None):
-    f.seek(10)
-    data_start = int.from_bytes(f.read(4), 'little')
+def load(file, *, bitmap=None, palette=None):
+    file.seek(10)
+    data_start = int.from_bytes(file.read(4), 'little')
     # f.seek(14)
     # bmp_header_length = int.from_bytes(f.read(4), 'little')
     # print(bmp_header_length)
-    f.seek(18)
-    width = int.from_bytes(f.read(4), 'little')
-    height = int.from_bytes(f.read(4), 'little')
-    f.seek(28)
-    color_depth = int.from_bytes(f.read(2), 'little')
-    f.seek(46)
-    colors = int.from_bytes(f.read(4), 'little')
+    file.seek(18)
+    width = int.from_bytes(file.read(4), 'little')
+    height = int.from_bytes(file.read(4), 'little')
+    file.seek(28)
+    color_depth = int.from_bytes(file.read(2), 'little')
+    file.seek(46)
+    colors = int.from_bytes(file.read(4), 'little')
 
     if colors == 0 and color_depth >= 16:
         raise NotImplementedError("True color BMP unsupported")
@@ -52,4 +52,4 @@ def load(f, *, bitmap=None, palette=None):
         if colors == 0:
             colors = 2 ** color_depth
         from . import indexed
-        return indexed.load(f, width, height, data_start, colors, color_depth, bitmap=bitmap, palette=palette)
+        return indexed.load(file, width, height, data_start, colors, color_depth, bitmap=bitmap, palette=palette)
