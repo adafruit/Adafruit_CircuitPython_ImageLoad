@@ -33,6 +33,10 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 def load(f, *, bitmap=None, palette=None):
+    """
+    reads header info from bitmap files, and delegates to indexed.load for index files.
+    True color is not supported
+    """
     f.seek(10)
     data_start = int.from_bytes(f.read(4), 'little')
     # f.seek(14)
