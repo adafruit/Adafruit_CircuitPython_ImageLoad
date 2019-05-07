@@ -24,7 +24,7 @@ class Bitmap_C_Interface(object):
 
     def __setitem__(self, key, value):
         if isinstance(key, tuple):
-
+            # order is X, Y from the docs https://github.com/adafruit/circuitpython/blob/master/shared-bindings/displayio/Bitmap.c
             if (self._abs_pos(key[0], key[1])) > self.height * self.width:
                 raise RuntimeError('illegal position')
             self.__setitem__(self._abs_pos(key[0], key[1]), value)
@@ -134,6 +134,7 @@ class TestBitmap_C(TestCase):
         encoded = b._abs_pos(3,3)
         self.assertEqual((3,3), b._decode(encoded))
 
+
 class TestPnmLoad(TestCase):
 
     def test_load_fails_with_no_header_data(self):
@@ -155,8 +156,8 @@ class TestPnmLoad(TestCase):
         self.assertEqual(21, bitmap.height)
 
         bitmap.validate()
-        self.assertEqual(bytearray(b'0000000000000'), bitmap[0])  # check first row
-        self.assertEqual(bytearray(b'0000010000010'), bitmap[1])  # check second row
+        self.assertEqual(bytearray(b'0'), bitmap[0])  # check first row
+        self.assertEqual(bytearray(b'1'), bitmap[12,1])  # check second row
 
     def test_load_works_p4_in_mem(self):
         f = BytesIO(b"P4\n4 2\n\x55\x55")

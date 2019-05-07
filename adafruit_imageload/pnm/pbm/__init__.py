@@ -17,23 +17,24 @@ def load(f, magic_number, header, bitmap = None , palette = None):
         bitmap = bitmap(width, height, 1)
         if magic_number == b'P1':  # ASCII space packed file
             next_byte = True
-            for line in range(height):
-                col = 1
+            for y in range(height):
+                x = 0
                 while next_byte:
                     next_byte = f.read(1)
                     if not next_byte.isdigit():
                         continue
-                    bitmap[line] = next_byte
-                    if col == width:
+                    logging.info(f'set {x},{y} to {next_byte}')
+                    bitmap[x, y] = next_byte
+                    if x == width - 1:
                         break
-                    col += 1
+                    x += 1
             return bitmap, palette
         if magic_number == b'P4':  # binary read from file as hex
 
             min_read = width // 8
             dirty_bits = bytes()
             chunk = bytearray(width)
-            for line in range(height):
+            for y in range(height):
                 data = dirty_bits + f.read(min_read if dirty_bits else min_read + 1)
                 row = data[:width]
                 dirty_bits = data[width:]
@@ -41,7 +42,7 @@ def load(f, magic_number, header, bitmap = None , palette = None):
                     byte = access_bit(row, i)
                 #    data.readinto(1)
                     logging.info(f'row {row} byte {byte} {type(row)}')
-                    bitmap[line] = byte
+                    bitmap[y] = byte
             return bitmap, palette
         raise NotImplementedError('magic number {}'.format(magic_number))
 
