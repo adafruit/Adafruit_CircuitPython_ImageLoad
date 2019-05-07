@@ -32,14 +32,13 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
+def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
     if palette:
         palette = palette(colors)
 
-        f.seek(data_start - colors * 4)
-        for color in range(colors):
-            c = f.read(4)
-            palette[color] = c
+        file.seek(data_start - colors * 4)
+        for value in range(colors):
+            palette[value] = file.read(4)
 
     if bitmap:
         minimum_color_depth = 1
@@ -47,7 +46,7 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
             minimum_color_depth *= 2
 
         bitmap = bitmap(width, height, colors)
-        f.seek(data_start)
+        file.seek(data_start)
         line_size = width // (8 // color_depth)
         if line_size % 4 != 0:
             line_size += (4 - line_size % 4)
@@ -61,7 +60,7 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
             packed_pixels = bytearray(target_line_size)
 
         for line in range(height-1, -1, -1):
-            chunk = f.read(line_size)
+            chunk = file.read(line_size)
             if packed_pixels:
                 original_pixels_per_byte = 8 // color_depth
                 packed_pixels_per_byte = 8 // minimum_color_depth
