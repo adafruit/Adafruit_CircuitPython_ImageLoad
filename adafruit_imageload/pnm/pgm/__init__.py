@@ -30,18 +30,21 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 """
 
 def load(f, magic_number, header, *, bitmap=None, palette=None):
-    # TODO: remove unneed variables later
+    # TODO: remove unused variables later
     width = header[0]
     height = header[1]
     max_colors = header[2] + 1
-    min_color = 1
+    min_color = 1 # probably don't need this
     line_length = width //(8 // max_colors)
+    bitmap = bitmap(width, height, max_colors)
+
 
     if max_color > 256:
         # raise exception
 
     if magic_number == "P2":
         # Convert ascii to Bits
+        
 
 
     # Assign bits to bitmap
@@ -52,44 +55,50 @@ def load(f, magic_number, header, *, bitmap=None, palette=None):
 
         # Loop through lines using line width and build
 
-        # Return bitmap and pallete
+        # Return bitmap
+
+    # Example bitmap object:
+        # [
+        #   [(222), (33), 5), (76), (55), (82)]
+        # ]
 
 
-    if bitmap:
-        minimum_color_depth = 1
-        while colors > 2 ** minimum_color_depth:
-            minimum_color_depth *= 2
 
-        bitmap = bitmap(width, height, colors)
-        f.seek(data_start)
-        line_size = width // (8 // color_depth)
-        if line_size % 4 != 0:
-            line_size += (4 - line_size % 4)
+    # if bitmap:
+    #     minimum_color_depth = 1
+    #     while colors > 2 ** minimum_color_depth:
+    #         minimum_color_depth *= 2
 
-        packed_pixels = None
-        if color_depth != minimum_color_depth and minimum_color_depth == 2:
-            target_line_size = width // 4
-            if target_line_size % 4 != 0:
-                target_line_size += (4 - target_line_size % 4)
+    #     bitmap = bitmap(width, height, colors)
+    #     f.seek(data_start)
+    #     line_size = width // (8 // color_depth)
+    #     if line_size % 4 != 0:
+    #         line_size += (4 - line_size % 4)
 
-            packed_pixels = bytearray(target_line_size)
+    #     packed_pixels = None
+    #     if color_depth != minimum_color_depth and minimum_color_depth == 2:
+    #         target_line_size = width // 4
+    #         if target_line_size % 4 != 0:
+    #             target_line_size += (4 - target_line_size % 4)
 
-        for line in range(height-1,-1,-1):
-            chunk = f.read(line_size)
-            if packed_pixels:
-                original_pixels_per_byte = 8 // color_depth
-                packed_pixels_per_byte = 8 // minimum_color_depth
+    #         packed_pixels = bytearray(target_line_size)
 
-                for i in range(width // packed_pixels_per_byte):
-                    packed_pixels[i] = 0
+    #     for line in range(height-1,-1,-1):
+    #         chunk = f.read(line_size)
+    #         if packed_pixels:
+    #             original_pixels_per_byte = 8 // color_depth
+    #             packed_pixels_per_byte = 8 // minimum_color_depth
 
-                for i in range(width):
-                    pi = i // packed_pixels_per_byte
-                    ci = i // original_pixels_per_byte
-                    packed_pixels[pi] |= ((chunk[ci] >> (8 - color_depth*(i % original_pixels_per_byte + 1))) & 0x3) << (8 - minimum_color_depth*(i % packed_pixels_per_byte + 1))
+    #             for i in range(width // packed_pixels_per_byte):
+    #                 packed_pixels[i] = 0
 
-                bitmap._load_row(line, packed_pixels)
-            else:
-                bitmap._load_row(line, chunk)
+    #             for i in range(width):
+    #                 pi = i // packed_pixels_per_byte
+    #                 ci = i // original_pixels_per_byte
+    #                 packed_pixels[pi] |= ((chunk[ci] >> (8 - color_depth*(i % original_pixels_per_byte + 1))) & 0x3) << (8 - minimum_color_depth*(i % packed_pixels_per_byte + 1))
 
-    return bitmap, palette
+    #             bitmap._load_row(line, packed_pixels)
+    #         else:
+    #             bitmap._load_row(line, chunk)
+
+    # return bitmap, palette
