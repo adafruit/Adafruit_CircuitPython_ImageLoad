@@ -43,15 +43,16 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                 triplet = bytearray()
                 color = bytearray()
                 while True:
+                    if len(triplet) == max_colors:
+                        break
                     this_byte = file.read(1)
                     if this_byte.isdigit():
                         color += this_byte
                     else:
                         triplet += color
                         color = bytearray()
-                        break
+                        continue
 
-                if len(triplet) == max_colors:
-                    bitmap[offset + x] = triplet
+                bitmap[offset + x] = triplet
 
     return bitmap, palette
