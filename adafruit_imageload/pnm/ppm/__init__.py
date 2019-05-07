@@ -63,7 +63,7 @@ def load(file, magic_number, header, bitmap=None, palette=None):
 
         chunk = bytearray(line_size)
 
-        for y in range(height - 1):
+        for y in range(height):
             file.readinto(chunk)
             pixels_per_byte = 8 // max_colors
             offset = y * width

@@ -33,6 +33,8 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+import struct
+
 
 def load(file, width, height, max_colors, bitmap=None, palette=None):
     """Load an ascii ppm into the Bitmap object"""
@@ -52,7 +54,15 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                         triplet.append(color)
                         color = bytearray()
                         continue
-
-                bitmap[offset + x] = b"".join(triplet)
+                pixel = bytearray()
+                # This just became 8-bit only...
+                struct.pack_into(
+                    "BBB",
+                    pixel,
+                    int(triplet[0]),
+                    int(triplet[1]),
+                    int(triplet[2]),
+                )
+                bitmap[offset + x] = pixel
 
     return bitmap, palette
