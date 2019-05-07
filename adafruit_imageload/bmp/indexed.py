@@ -33,6 +33,9 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, palette=None):
+    """
+    Load indexed files, return a tuple of bitmap and palette
+    """
     if palette:
         palette = palette(colors)
 
@@ -60,7 +63,7 @@ def load(f, width, height, data_start, colors, color_depth, *, bitmap=None, pale
 
             packed_pixels = bytearray(target_line_size)
 
-        for line in range(height-1,-1,-1):
+        for line in range(height-1, -1, -1):
             chunk = f.read(line_size)
             if packed_pixels:
                 original_pixels_per_byte = 8 // color_depth
