@@ -35,17 +35,26 @@ def load(f, magic_number, header, *, bitmap=None, palette=None):
     height = header[1]
     max_colors = header[2] + 1
     min_color = 1 # probably don't need this
+    columns = height
     line_length = width //(8 // max_colors)
     bitmap = bitmap(width, height, max_colors)
 
 
     if max_color > 256:
         # raise exception
+        raise NotImplementedError("16 bit grayscale not supported")
 
     if magic_number == "P2":
-        # Convert ascii to Bits
-        
+        # Handle ascii
+        for x in height:
+            for y in line_length:
+            # Takes int and converts to an 8 bit
+                
+                bitmap[x,y] = format(inttoformat,'08b')
 
+
+
+    if magic_number == "P5":
 
     # Assign bits to bitmap
 
@@ -59,7 +68,7 @@ def load(f, magic_number, header, *, bitmap=None, palette=None):
 
     # Example bitmap object:
         # [
-        #   [(222), (33), 5), (76), (55), (82)]
+        #   [(222), (33), (5), (76), (55), (82)]
         # ]
 
 
