@@ -20,7 +20,7 @@ overhead of the decoding code.
 Usage Example
 =============
 
-.. literalinclude:: examples/imageload_simpletest.py
+.. literalinclude:: ./examples/imageload_simpletest.py
 
 Contributing
 ============
