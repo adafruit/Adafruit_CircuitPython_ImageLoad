@@ -54,7 +54,7 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                         triplet.append(color)
                         color = bytearray()
                         continue
-                pixel = bytearray()
+                pixel = bytearray(3)
                 # This just became 8-bit only...
                 struct.pack_into(
                     "BBB",
