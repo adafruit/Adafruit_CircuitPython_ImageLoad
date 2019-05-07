@@ -33,6 +33,8 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+import math
+
 
 def load(file, magic_number, header, bitmap=None, palette=None):
     """Load pixel values (indices or colors) into a bitmap and for a binary
@@ -40,7 +42,8 @@ def load(file, magic_number, header, bitmap=None, palette=None):
     width = header[0]
     height = header[1]
     max_colors = (header[2] + 1) ** 3
-    bitmap = bitmap(width, height, max_colors)
+    colors = math.log(header[2], 2)
+    bitmap = bitmap(width, height, int(colors))
     palette = None
 
     if bitmap:
