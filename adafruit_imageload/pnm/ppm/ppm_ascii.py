@@ -26,7 +26,7 @@
 Load pixel values (indices or colors) into a bitmap and for an ascii ppm,
 return None for pallet.
 
-* Author(s): Brooke Storm
+* Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
 
