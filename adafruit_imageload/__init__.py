@@ -55,4 +55,3 @@ def load(filename, *, bitmap=None, palette=None):
             return pnm.load(f, header, bitmap=bitmap, palette=palette)
         else:
             raise RuntimeError("Unsupported image format")
-
