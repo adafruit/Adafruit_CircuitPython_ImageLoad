@@ -37,7 +37,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 def load(file, width, height, max_colors, bitmap=None, palette=None):
     """Load an ascii ppm into the Bitmap object"""
     if bitmap:
-        for y in range(height - 1):
+        for y in range(height):
             offset = y * width
             for x in range(width):
                 triplet = []
