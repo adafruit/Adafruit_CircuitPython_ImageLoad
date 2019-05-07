@@ -44,6 +44,14 @@ def load(file, magic_number, header, bitmap=None, palette=None):
     palette = None
 
     if bitmap:
+        if magic_number == b"P3":
+            # This is ascii
+            from . import ppm_ascii
+
+            return ppm_ascii.load(
+                file, width, height, max_colors, bitmap=bitmap, palette=None
+            )
+
         minimum_color_depth = 1
         while max_colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
@@ -53,18 +61,6 @@ def load(file, magic_number, header, bitmap=None, palette=None):
         if line_size % 4 != 0:
             line_size += 4 - line_size % 4
 
-            if magic_number == b"P3":
-                # This is ascii
-                from . import ppm_ascii
-
-                return ppm_ascii.load(
-                    file,
-                    width,
-                    height,
-                    max_colors,
-                    bitmap=bitmap,
-                    palette=None,
-                )
         chunk = bytearray(line_size)
 
         for y in range(height - 1):
