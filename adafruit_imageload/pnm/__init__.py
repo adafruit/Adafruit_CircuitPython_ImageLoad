@@ -68,7 +68,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
 
-            pnm_header.append(int(value))
+            pnm_header.append(int.from_bytes(value, "little"))
             continue
 
         if not next_byte:
