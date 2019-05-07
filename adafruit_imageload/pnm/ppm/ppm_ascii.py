@@ -59,6 +59,7 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                 struct.pack_into(
                     "BBB",
                     pixel,
+                    0,
                     int(triplet[0]),
                     int(triplet[1]),
                     int(triplet[2]),
