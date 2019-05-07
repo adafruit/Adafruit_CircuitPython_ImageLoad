@@ -56,7 +56,7 @@ def load(file, magic_number, header, bitmap=None, palette=None):
         while max_colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
-        line_size = width // (8 // max_colors)
+        line_size = (width * max_colors) // 8
 
         if line_size % 4 != 0:
             line_size += 4 - line_size % 4
