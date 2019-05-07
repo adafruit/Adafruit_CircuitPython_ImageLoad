@@ -188,10 +188,21 @@ class TestPnmLoad(TestCase):
 
 class TestPPMLoad(TestCase):
 
-    def test_load_works_p1_ascii(self):
+    def test_load_works_p3_ascii(self):
         test_file = os.path.join(os.path.dirname(__file__), '..', '..', 'examples', 'images', 'netpbm_p3_rgb_ascii.ppm')
         with open(test_file, 'rb') as f:
             bitmap, palette = pnm.load(f, b'P3', bitmap=Bitmap_C_Interface)
+        self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
+        self.assertEqual(16777216, bitmap.colors)
+        self.assertEqual(16, bitmap.width)
+        self.assertEqual(16, bitmap.height)
+        bitmap.validate()
+        str(bitmap)
+
+    def test_load_works_p6_binary(self):
+        test_file = os.path.join(os.path.dirname(__file__), '..', '..', 'examples', 'images', 'netpbm_p6_binary.ppm')
+        with open(test_file, 'rb') as f:
+            bitmap, palette = pnm.load(f, b'P6', bitmap=Bitmap_C_Interface)
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(16777216, bitmap.colors)
         self.assertEqual(16, bitmap.width)
