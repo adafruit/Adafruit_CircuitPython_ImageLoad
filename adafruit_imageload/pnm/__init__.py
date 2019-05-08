@@ -45,12 +45,18 @@ def load(file, header, *, bitmap=None, palette=None):
         if len(pnm_header) == 2:
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
+
                 bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
-                return pbm_ascii.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
+                return pbm_ascii.load(
+                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                )
             if magic_number.startswith(b"P4"):
                 from . import pbm_binary
+
                 bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
-                return pbm_binary.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
+                return pbm_binary.load(
+                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                )
 
         next_byte = file.read(1)
         if next_byte == b"#":
