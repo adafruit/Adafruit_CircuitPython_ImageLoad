@@ -60,10 +60,10 @@ def load(file, width, height, max_colors, bitmap=None, palette=None):
                     "BBB",
                     pixel,
                     0,
-                    int(triplet[0]),
-                    int(triplet[1]),
-                    int(triplet[2]),
+                    int("".join(["%c" % char for char in triplet[0]])),
+                    int("".join(["%c" % char for char in triplet[1]])),
+                    int("".join(["%c" % char for char in triplet[2]])),
                 )
-                bitmap[offset + x] = pixel
+                bitmap[offset + x] = int.from_bytes(pixel, "little")
 
     return bitmap, palette

@@ -33,6 +33,8 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+import math
+
 
 def load(file, magic_number, header, bitmap=None, palette=None):
     """Load pixel values (indices or colors) into a bitmap and for a binary
@@ -40,7 +42,9 @@ def load(file, magic_number, header, bitmap=None, palette=None):
     width = header[0]
     height = header[1]
     max_colors = (header[2] + 1) ** 3
-    bitmap = bitmap(width, height, max_colors)
+    # TODO: This needs to be different most likely?
+    colors = math.log(header[2], 2)
+    bitmap = bitmap(width, height, int(colors))
     palette = None
 
     if bitmap:
@@ -56,16 +60,19 @@ def load(file, magic_number, header, bitmap=None, palette=None):
         while max_colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
+        # This seems maybe right?
         line_size = width * 3
 
         chunk = bytearray(line_size)
 
         for y in range(height):
             file.readinto(chunk)
+            # Division by zero!
             pixels_per_byte = 8 // max_colors
             offset = y * width
 
             for x in range(width):
+                # This math is clearly wrong and was just copied in from the PR
                 i = x // pixels_per_byte
                 pixel = (
                     chunk[i] >> (8 - max_colors * (x % pixels_per_byte + 1))
