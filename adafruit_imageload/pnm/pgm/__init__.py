@@ -28,7 +28,7 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-
+#import logging
 
 def load(file, magic_number, header, *, bitmap=None, palette=None):
     # TODO: remove unused variables later
@@ -50,14 +50,15 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
             for x in range(width):
             # Takes int and converts to an 8 bit
                 while True:
-                    bit = file.read(1)  # type: byte
-                    if not bit.isdigit():
+                    byte = file.read(1)  # type: byte
+                    if not byte.isdigit():
                         break
-                    pixel += bit
+                    pixel += byte
 
                 int_pixel = int("".join(["%c" % char for char in pixel]))
                 bitmap[x, y] = int_pixel
                 colors.add(int_pixel)
+                # logging.info(f'{x}, {y}, {byte}, {int_pixel}')
         if palette:
             palette = palette(len(colors))
             for counter, color in enumerate(colors):
@@ -71,10 +72,13 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
     if magic_number == b'P5': # To handle binary PGM files.
         for y in range(height):
             for x in range(width):
-                bit = file.read(2)
-                if not bit.isdigit():
+                byte = file.read(1)
+                if byte == b"":
                     raise ValueError("ran out of file unexpectedly")
-                bitmap[x, y] = bit
+                int_pixel = int.from_bytes(byte, "little")
+                bitmap[x, y] = int_pixel
+                colors.add(int_pixel)
+
 
         if palette:
             palette = palette(len(colors))
@@ -85,8 +89,5 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
                 palette[counter] = color_bytearray
 
         return bitmap, palette
-
-
-
 
     raise NotImplementedError("Was not able to send image")

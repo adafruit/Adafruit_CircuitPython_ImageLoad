@@ -180,7 +180,9 @@ class TestPgmLoad(TestCase):
         self.assertEqual(8, bitmap.width)
         self.assertEqual(8, bitmap.height)
         bitmap.validate()
-        self.assertEqual(6, palette.colors)
+        self.assertEqual(8, palette.num_colors)
+        
+
 
 
 class TestPnmLoad(TestCase):
