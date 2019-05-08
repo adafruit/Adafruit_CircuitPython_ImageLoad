@@ -35,23 +35,20 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
     width = header[0]
     height = header[1]
     max_colors = header[2]
-    min_color = 1 # probably don't need this
-    columns = height
     bitmap = bitmap(width, height, max_colors)
+    colors = set()
+    pixel = bytearray()
 
 
     if max_colors > 256:
         # raise exception
         raise NotImplementedError("16 bit grayscale not supported")
 
-    if magic_number == b'P2':
+    if magic_number == b'P2': # To handle ascii PGM files.
         # Handle ascii
-        colors = set()
         for y in range(height):
             for x in range(width):
             # Takes int and converts to an 8 bit
-                pixel = bytearray()
-
                 while True:
                     bit = file.read(1)  # type: byte
                     if not bit.isdigit():
@@ -71,7 +68,25 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
         return bitmap, palette
 
 
-    if magic_number == b'P5':
-        raise NotImplementedError("This is a Binary file")
+    if magic_number == b'P5': # To handle binary PGM files.
+        for y in range(height):
+            for x in range(width):
+                bit = file.read(2)
+                if not bit.isdigit():
+                    raise ValueError("ran out of file unexpectedly")
+                bitmap[x, y] = bit
+
+        if palette:
+            palette = palette(len(colors))
+            for counter, color in enumerate(colors):
+                color_bytearray = bytearray()
+                for i in range(3):
+                    color_bytearray += bytes([color])
+                palette[counter] = color_bytearray
+
+        return bitmap, palette
+
+
+
 
     raise NotImplementedError("Was not able to send image")
