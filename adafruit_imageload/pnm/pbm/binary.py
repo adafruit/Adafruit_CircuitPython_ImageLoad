@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload.pnm.pbm`
+`adafruit_imageload.pnm.pbm.binary`
 ====================================================
 
-Load pixel values (indices or colors) into a bitmap and for a binary ppm,
+Load pixel values (indices or colors) into a bitmap and for an ascii ppm,
 return None for pallet.
 
 * Author(s):  Matt Land, Brooke Storm, Sam McGahan
@@ -34,24 +34,27 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, magic_number, header, bitmap=None, palette=None):
+def load(file, width, height, bitmap=None, palette=None):
     """
-    Load a P1 or P4 Netpbm 'PBM' image into the displayio.Bitmap
+    Load a P4 'PBM' binary image into the displayio.Bitmap
     """
-    width = header[0]
-    height = header[1]
+    x = 0
+    y = 0
+    while True:
+        next_byte = file.read(1)
+        if not next_byte:
+            break  # out of bits
+        for bit in iterbits(int.from_bytes(next_byte, byteorder='little')):
+            bitmap[x, y] = bit
+            x += 1
+            if x > width - 1:
+                y += 1
+                x = 0
+            if y > height - 1:
+                break
+    return bitmap, palette
 
-    if palette:
-        palette = palette(1)
-    if bitmap:
-        bitmap = bitmap(width, height, 1)
-        if magic_number == b'P1':
-            from . import ascii
-            return ascii.load(file, width, height, bitmap, palette)
-        if magic_number == b'P4':
-            from . import binary
-            return binary.load(file, width, height, bitmap, palette)
-        raise NotImplementedError('magic number {}'.format(magic_number))
 
-
-
+def iterbits(b):
+    for i in range(8):
+        yield (b >> i) & 1
