@@ -44,7 +44,7 @@ def load(file, width, height, bitmap=None, palette=None):
         next_byte = file.read(1)
         if not next_byte:
             break  # out of bits
-        for bit in iterbits(int.from_bytes(next_byte, byteorder="little")):
+        for bit in iterbits(int.from_bytes(next_byte, "little")):
             bitmap[x, y] = bit
             x += 1
             if x > width - 1:
