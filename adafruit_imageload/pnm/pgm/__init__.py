@@ -58,73 +58,20 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
                         break
                     pixel += bit
 
-                bitmap[x, y] = int(pixel)
-                colors.add(int(pixel))
+                int_pixel = int("".join(["%c" % char for char in pixel]))
+                bitmap[x, y] = int_pixel
+                colors.add(int_pixel)
         if palette:
             palette = palette(len(colors))
             for counter, color in enumerate(colors):
-                color_int = int(f'{hex(color)}{hex(color)[2:]}{hex(color)[2:]}', 16) # HACK: is there a better way?
-                palette[counter] = color_int
+                color_bytearray = bytearray()
+                for i in range(3):
+                    color_bytearray += bytes([color])
+                palette[counter] = color_bytearray
         return bitmap, palette
 
 
     if magic_number == b'P5':
-        raise NotImplementedError("Nope")
+        raise NotImplementedError("This is a Binary file")
 
-    raise NotImplementedError("no")
-
-    # Assign bits to bitmap
-
-        # create pallete
-
-        # create bitmap
-
-        # Loop through lines using line width and build
-
-        # Return bitmap
-
-    # Example bitmap object:
-        # [
-        #   [(222), (33), (5), (76), (55), (82)]
-        # ]
-
-
-
-    # if bitmap:
-    #     minimum_color_depth = 1
-    #     while colors > 2 ** minimum_color_depth:
-    #         minimum_color_depth *= 2
-
-    #     bitmap = bitmap(width, height, colors)
-    #     f.seek(data_start)
-    #     line_size = width // (8 // color_depth)
-    #     if line_size % 4 != 0:
-    #         line_size += (4 - line_size % 4)
-
-    #     packed_pixels = None
-    #     if color_depth != minimum_color_depth and minimum_color_depth == 2:
-    #         target_line_size = width // 4
-    #         if target_line_size % 4 != 0:
-    #             target_line_size += (4 - target_line_size % 4)
-
-    #         packed_pixels = bytearray(target_line_size)
-
-    #     for line in range(height-1,-1,-1):
-    #         chunk = f.read(line_size)
-    #         if packed_pixels:
-    #             original_pixels_per_byte = 8 // color_depth
-    #             packed_pixels_per_byte = 8 // minimum_color_depth
-
-    #             for i in range(width // packed_pixels_per_byte):
-    #                 packed_pixels[i] = 0
-
-    #             for i in range(width):
-    #                 pi = i // packed_pixels_per_byte
-    #                 ci = i // original_pixels_per_byte
-    #                 packed_pixels[pi] |= ((chunk[ci] >> (8 - color_depth*(i % original_pixels_per_byte + 1))) & 0x3) << (8 - minimum_color_depth*(i % packed_pixels_per_byte + 1))
-
-    #             bitmap._load_row(line, packed_pixels)
-    #         else:
-    #             bitmap._load_row(line, chunk)
-
-    # return bitmap, palette
+    raise NotImplementedError("Was not able to send image")
