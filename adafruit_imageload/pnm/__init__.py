@@ -42,21 +42,25 @@ def load(file, header, *, bitmap=None, palette=None):
         # We have all we need at length 3
         if len(pnm_header) == 3:
             break
-        if len(pnm_header) == 2:
+        if len(pnm_header) == 2 and (
+            magic_number.startswith(b"P1") or magic_number.startswith(b"P4")
+        ):
+            bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
+            if palette:
+                palette = palette(1)
+                palette[0] = 0xFFFFFF
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 
-                bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
                 return pbm_ascii.load(
                     file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
                 )
-            if magic_number.startswith(b"P4"):
-                from . import pbm_binary
 
-                bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
-                return pbm_binary.load(
-                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
-                )
+            from . import pbm_binary
+
+            return pbm_binary.load(
+                file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+            )
 
         next_byte = file.read(1)
         if next_byte == b"#":
@@ -85,15 +89,11 @@ def load(file, header, *, bitmap=None, palette=None):
     if magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
         from . import pgm
 
-        return pgm.load(
-            file, magic_number, pnm_header, bitmap=bitmap, palette=palette
-        )
+        return pgm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
     if magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
         from . import ppm
 
-        return ppm.load(
-            file, magic_number, pnm_header, bitmap=bitmap, palette=palette
-        )
+        return ppm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
     raise RuntimeError("Unsupported image format")
