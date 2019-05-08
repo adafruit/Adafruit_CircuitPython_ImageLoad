@@ -45,7 +45,7 @@ def load(file, width, height, bitmap=None, palette=None):
             next_byte = file.read(1)
             if not next_byte.isdigit():
                 continue
-            bitmap[x, y] = 1 if next_byte == b'1' else 0
+            bitmap[x, y] = 1 if next_byte == b"1" else 0
             if x == width - 1:
                 break
             x += 1

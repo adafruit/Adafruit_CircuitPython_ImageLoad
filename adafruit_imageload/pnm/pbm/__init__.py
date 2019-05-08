@@ -45,13 +45,12 @@ def load(file, magic_number, header, bitmap=None, palette=None):
         palette = palette(1)
     if bitmap:
         bitmap = bitmap(width, height, 1)
-        if magic_number == b'P1':
+        if magic_number == b"P1":
             from . import ascii
+
             return ascii.load(file, width, height, bitmap, palette)
-        if magic_number == b'P4':
+        if magic_number == b"P4":
             from . import binary
+
             return binary.load(file, width, height, bitmap, palette)
-        raise NotImplementedError('magic number {}'.format(magic_number))
-
-
-
+        raise NotImplementedError("magic number {}".format(magic_number))
