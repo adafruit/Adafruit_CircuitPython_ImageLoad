@@ -29,32 +29,49 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
 """
 
-def load(f, magic_number, header, *, bitmap=None, palette=None):
+
+def load(file, magic_number, header, *, bitmap=None, palette=None):
     # TODO: remove unused variables later
     width = header[0]
     height = header[1]
-    max_colors = header[2] + 1
+    max_colors = header[2]
     min_color = 1 # probably don't need this
     columns = height
-    line_length = width //(8 // max_colors)
     bitmap = bitmap(width, height, max_colors)
 
 
-    if max_color > 256:
+    if max_colors > 256:
         # raise exception
         raise NotImplementedError("16 bit grayscale not supported")
 
-    if magic_number == "P2":
+    if magic_number == b'P2':
         # Handle ascii
-        for x in height:
-            for y in line_length:
+        colors = set()
+        for y in range(height):
+            for x in range(width):
             # Takes int and converts to an 8 bit
-                
-                bitmap[x,y] = format(inttoformat,'08b')
+                pixel = bytearray()
+
+                while True:
+                    bit = file.read(1)  # type: byte
+                    if not bit.isdigit():
+                        break
+                    pixel += bit
+
+                bitmap[x, y] = int(pixel)
+                colors.add(int(pixel))
+        if palette:
+            palette = palette(len(colors))
+            for counter, color in enumerate(colors):
+                color_int = int(f'{hex(color)}{hex(color)[2:]}{hex(color)[2:]}', 16) # HACK: is there a better way?
+                palette[counter] = color_int
+        return bitmap, palette
 
 
+    if magic_number == b'P5':
+        raise NotImplementedError("Nope")
 
-    if magic_number == "P5":
+    raise NotImplementedError("no")
 
     # Assign bits to bitmap
 
