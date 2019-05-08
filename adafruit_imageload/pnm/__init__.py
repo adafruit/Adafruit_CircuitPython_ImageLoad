@@ -33,27 +33,39 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(f, header, *, bitmap=None, palette=None):
+def load(file, header, *, bitmap=None, palette=None):
     # Read the header
     magic_number = header[:2]
-    f.seek(2)
+    file.seek(2)
     pnm_header = []
     while True:
         # We have all we need at length 3
         if len(pnm_header) == 3:
             break
-        if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
-            if len(pnm_header) == 2:
-                from . import pbm
+        if len(pnm_header) == 2 and (
+            magic_number.startswith(b"P1") or magic_number.startswith(b"P4")
+        ):
+            bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
+            if palette:
+                palette = palette(1)
+                palette[0] = 0xFFFFFF
+            if magic_number.startswith(b"P1"):
+                from . import pbm_ascii
 
-                return pbm.load(
-                    f, magic_number, pnm_header, bitmap=bitmap, palette=palette
+                return pbm_ascii.load(
+                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
                 )
 
-        next_byte = f.read(1)
+            from . import pbm_binary
+
+            return pbm_binary.load(
+                file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+            )
+
+        next_byte = file.read(1)
         if next_byte == b"#":
             while True:
-                next_byte = f.read(1)
+                next_byte = file.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
                 if next_byte == b"\n":
@@ -64,7 +76,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 if not next_byte.isdigit():
                     break
                 value += next_byte
-                next_byte = f.read(1)
+                next_byte = file.read(1)
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
 
@@ -77,15 +89,11 @@ def load(f, header, *, bitmap=None, palette=None):
     if magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
         from . import pgm
 
-        return pgm.load(
-            f, magic_number, pnm_header, bitmap=bitmap, palette=palette
-        )
+        return pgm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
     if magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
         from . import ppm
 
-        return ppm.load(
-            f, magic_number, pnm_header, bitmap=bitmap, palette=palette
-        )
+        return ppm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
     raise RuntimeError("Unsupported image format")
