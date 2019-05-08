@@ -41,11 +41,9 @@ def load(f, header, *, bitmap=None, palette=None):
     while True:
         # We have all we need at length 3
         if len(pnm_header) == 3:
-            f.read(1)
             break
         if magic_number.startswith(b"P1") or magic_number.startswith(b"P4"):
             if len(pnm_header) == 2:
-                f.read(1)
                 from . import pbm
 
                 return pbm.load(
@@ -70,7 +68,7 @@ def load(f, header, *, bitmap=None, palette=None):
                 if not next_byte:
                     raise RuntimeError("Unsupported image format")
 
-            pnm_header.append(int(value))
+            pnm_header.append(int("".join(["%c" % char for char in value])))
             continue
 
         if not next_byte:
