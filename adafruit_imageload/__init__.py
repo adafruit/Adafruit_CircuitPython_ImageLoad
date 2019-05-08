@@ -42,16 +42,15 @@ def load(filename, *, bitmap=None, palette=None):
        palette is the desired pallete type. The constructor should take the number of colors and
        support assignment to indices via [].
     """
-    with open(filename, "rb") as f:
-        header = f.read(3)
-        f.seek(0)
+    with open(filename, "rb") as file:
+        header = file.read(3)
+        file.seek(0)
         if header.startswith(b"BM"):
             from . import bmp
-
-            return bmp.load(f, bitmap=bitmap, palette=palette)
+            return bmp.load(file, bitmap=bitmap, palette=palette)
         elif header.startswith(b"P"):
             from . import pnm
 
-            return pnm.load(f, header, bitmap=bitmap, palette=palette)
+            return pnm.load(file, header, bitmap=bitmap, palette=palette)
         else:
             raise RuntimeError("Unsupported image format")

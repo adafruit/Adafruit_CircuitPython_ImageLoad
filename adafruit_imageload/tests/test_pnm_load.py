@@ -25,21 +25,19 @@ class Bitmap_C_Interface(object):
     def __setitem__(self, key, value):
         if isinstance(key, tuple):
             # order is X, Y from the docs https://github.com/adafruit/circuitpython/blob/master/shared-bindings/displayio/Bitmap.c
-            if (self._abs_pos(key[0], key[1])) > self.height * self.width:
-                raise RuntimeError('illegal position')
             self.__setitem__(self._abs_pos(key[0], key[1]), value)
             return
-        if key > self.height * self.width:
-            raise RuntimeError('illegal position')
+        #if key > self.height * self.width:
+        #    raise RuntimeError('illegal set position {}'.format(self._decode(key)))
+        if not isinstance(value, int):
+            raise RuntimeError(f'set value as int, not {type(value)}')
         self.data[key] = value
 
     def __getitem__(self, item: str) -> bytearray:
         if isinstance(item, tuple):
-            if self._abs_pos(item[0], item[1]) > self.height * self.width:
-                raise RuntimeError('illegal item position {}'.format(self._abs_pos(item[0], item[1])))
             return self.__getitem__(self._abs_pos(item[0], item[1]))
-        if item > self.height * self.width:
-            raise RuntimeError('illegal item position {}'.format(item))
+        #if item > self.height * self.width:
+        #    raise RuntimeError('illegal item position {}'.format(item))
         try:
             return self.data[item]
         except KeyError:
@@ -56,9 +54,9 @@ class Bitmap_C_Interface(object):
 
     def __str__(self):
         out = '\n'
-        for x in range(self.width):
-            for y in range(self.height):
-                data = self[x,y]
+        for y in range(self.height):
+            for x in range(self.width):
+                data = self[x, y]
                 out += f'{data}'
             out += '\n'
         return out
@@ -67,14 +65,14 @@ logging.getLogger().setLevel(logging.INFO)
 
 class TestBitmap_C(TestCase):
     def test_init(self):
-        b = Bitmap_C_Interface(2,4,1)
+        b = Bitmap_C_Interface(2, 4, 1)
         self.assertEqual(2,b.width)
         self.assertEqual(4, b.height)
         self.assertEqual(1, b.colors)
 
     def test_set_tuple(self):
         b = Bitmap_C_Interface(2,4,1)
-        b[0,0] = 67
+        b[0, 0] = 67
         self.assertEqual(b[0, 0], 67)
 
     def test_set_abs(self):
@@ -85,12 +83,12 @@ class TestBitmap_C(TestCase):
     def test_abs_and_tuple(self):
         b = Bitmap_C_Interface(2,4,1)
         b[0] = 101
-        self.assertEqual(101, b[0,0])
+        self.assertEqual(101, b[0, 0])
 
     def test_non_zero(self):
         b = Bitmap_C_Interface(2,4,1)
-        b[1,1] = 100
-        self.assertEqual(100, b[1,1])
+        b[1, 1] = 100
+        self.assertEqual(100, b[1, 1])
 
     def test_throws_x_out_of_range(self):
         b = Bitmap_C_Interface(2,4,1)
@@ -103,12 +101,12 @@ class TestBitmap_C(TestCase):
     def test_max(self):
         b = Bitmap_C_Interface(2,4,1)
         b[1,1] = 66
-        self.assertEqual(66, b[1,1])
+        self.assertEqual(66, b[1, 1])
 
     def test_uninitialized(self):
         b = Bitmap_C_Interface(2,4,1)
         try:
-            b[1,1]
+            b[1, 1]
             self.fail('should have thrown')
         except RuntimeError:
             pass
@@ -121,18 +119,21 @@ class TestBitmap_C(TestCase):
             pass
 
     def test_repr(self):
-        b = Bitmap_C_Interface(2,2,1)
-        b[0] = 1
-        b[1] = 0
-        b[2] = 0
-        b[3] = 1
-        self.assertEqual('\n10\n01\n', str(b))
+        b = Bitmap_C_Interface(3, 2, 1)
+        b[0, 0] = 1
+        b[1, 0] = 0
+        b[2, 0] = 0
+        b[0, 1] = 1
+        b[1, 1] = 1
+        b[2, 1] = 0
+        self.assertEqual('\n100\n110\n', str(b))
 
     def test_decode(self):
         b = Bitmap_C_Interface(4,4,1)
         self.assertEqual((0, 0), b._decode(0))
         encoded = b._abs_pos(3,3)
         self.assertEqual((3,3), b._decode(encoded))
+
 
 
 class TestPnmLoad(TestCase):
@@ -156,15 +157,16 @@ class TestPnmLoad(TestCase):
         self.assertEqual(21, bitmap.height)
 
         bitmap.validate()
-        self.assertEqual(bytearray(b'0'), bitmap[0])  # check first row
-        self.assertEqual(bytearray(b'1'), bitmap[12,1])  # check second row
+        self.assertEqual(0, bitmap[0])  # check first row
+        self.assertEqual(1, bitmap[12,1])  # check second row
 
     def test_load_works_p4_in_mem(self):
-        f = BytesIO(b"P4\n4 2\n\x55\x55")
+        f = BytesIO(b"P4\n4 2\n\x55")
         bitmap, palette = pnm.load(f, b'P4', bitmap=Bitmap_C_Interface)
         self.assertEqual(4, bitmap.width)
         self.assertEqual(2, bitmap.height)
         bitmap.validate()
+        self.assertEqual('\n1010\n1010\n', str(bitmap))
 
     def test_load_works_p4_binary(self):
         test_file = os.path.join(os.path.dirname(__file__), '..', '..', 'examples', 'images', 'netpbm_p4_mono.pbm')
@@ -182,8 +184,8 @@ class TestPnmLoad(TestCase):
             bitmap, palette = pnm.load(f, b'P4', bitmap=Bitmap_C_Interface)
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface))
         self.assertEqual(1, bitmap.colors)
-        self.assertEqual(1152, bitmap.width)
-        self.assertEqual(813, bitmap.height)
+        self.assertEqual(1920, bitmap.width)
+        self.assertEqual(1080, bitmap.height)
 
 
 class TestPPMLoad(TestCase):
