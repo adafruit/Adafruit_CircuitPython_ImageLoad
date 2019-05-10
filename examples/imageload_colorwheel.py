@@ -5,7 +5,7 @@ import adafruit_imageload
 display = board.DISPLAY
 
 bitmap, palette = adafruit_imageload.load("images/color_wheel.bmp",
-        bitmap=displayio.Bitmap, palette=displayio.Palette)
+    bitmap=displayio.Bitmap, palette=displayio.Palette)
 
 tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
 
@@ -13,4 +13,4 @@ group = displayio.Group()
 group.append(tile_grid)
 display.show(group)
 while True:
-        pass
+    pass
