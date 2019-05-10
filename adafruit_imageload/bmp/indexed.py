@@ -50,7 +50,9 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
             c_bytes = file.read(4)
             # Need to swap red & blue bytes (bytes 0 and 2)
             palette[value] = bytes(b''.join([c_bytes[2:3],
-                c_bytes[1:2], c_bytes[0:1], c_bytes[3:1]]))
+                                             c_bytes[1:2],
+                                             c_bytes[0:1],
+                                             c_bytes[3:1]]))
 
     if bitmap:
         minimum_color_depth = 1
