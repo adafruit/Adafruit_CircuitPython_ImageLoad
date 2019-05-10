@@ -47,7 +47,10 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
 
         file.seek(data_start - colors * 4)
         for value in range(colors):
-            palette[value] = file.read(4)
+            c = file.read(4)
+            # Need to swap red & green bytes (bytes 0 and 2)
+            d = bytes(b''.join([c[2:3],c[1:2],c[0:1],c[3:1]]))
+            palette[value] = d
 
     if bitmap:
         minimum_color_depth = 1
