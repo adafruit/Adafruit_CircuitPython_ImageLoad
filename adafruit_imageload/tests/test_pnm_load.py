@@ -57,10 +57,18 @@ class Bitmap_C_Interface(object):
         for y in range(self.height):
             for x in range(self.width):
                 data = self[x, y]
-                out += f"{data}"
+                out += f"{data} "
             out += "\n"
         return out
 
+
+class Palette_C_Interface(object):
+    def __init__(self, num_colors):
+        self.num_colors = num_colors
+        self.colors = {}
+
+    def __setitem__(self, key, value):
+        self.colors[key] = value
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -135,6 +143,46 @@ class TestBitmap_C(TestCase):
         self.assertEqual((0, 0), b._decode(0))
         encoded = b._abs_pos(3, 3)
         self.assertEqual((3, 3), b._decode(encoded))
+
+
+class TestPgmLoad(TestCase):
+    def test_load_works_p2_ascii(self):
+        test_file = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "examples",
+            "images",
+            "netpbm_p2_ascii.pgm",
+        )
+        with open(test_file, "rb") as f:
+            bitmap, palette = pnm.load(f, b"P2", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+        self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
+        self.assertEqual(255, bitmap.colors)
+        self.assertEqual(8, bitmap.width)
+        self.assertEqual(8, bitmap.height)
+        bitmap.validate()
+        self.assertEqual(6, palette.num_colors)
+
+    def test_load_works_p5_binary(self):
+        test_file = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "examples",
+            "images",
+            "netpbm_p5_binary.pgm",
+        )
+        with open(test_file, "rb") as f:
+            bitmap, palette = pnm.load(f, b"P5", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+        self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
+        self.assertEqual(255, bitmap.colors)
+        self.assertEqual(8, bitmap.width)
+        self.assertEqual(8, bitmap.height)
+        bitmap.validate()
+        self.assertEqual(8, palette.num_colors)
+        
+
 
 
 class TestPnmLoad(TestCase):
