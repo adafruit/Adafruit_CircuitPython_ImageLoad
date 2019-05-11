@@ -101,4 +101,4 @@ def load(file, header, *, bitmap=None, palette=None):
 
         return ppm_binary.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
 
-    raise RuntimeError("Unsupported image format")
+    raise RuntimeError("Unsupported image format {}".format(magic_number))
