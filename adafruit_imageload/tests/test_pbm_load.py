@@ -1,7 +1,7 @@
+import os
+from io import BytesIO
 from unittest import TestCase
 from adafruit_imageload import pnm
-from io import BytesIO
-import os
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 

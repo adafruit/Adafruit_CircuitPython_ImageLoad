@@ -26,7 +26,7 @@ class Bitmap_C_Interface(object):
             self.__setitem__(self._abs_pos(key[0], key[1]), value)
             return
         if not isinstance(value, (int)):
-            raise RuntimeError(f"set value as int or bytes, not {type(value)}")
+            raise RuntimeError(f"set value as int, not {type(value)}")
         if value > 255:
             raise ValueError(f'pixel value {value} too large')
         self.data[key] = value
@@ -34,8 +34,8 @@ class Bitmap_C_Interface(object):
     def __getitem__(self, item: tuple) -> bytearray:
         if isinstance(item, tuple):
             return self.__getitem__(self._abs_pos(item[0], item[1]))
-        # if item > self.height * self.width:
-        #    raise RuntimeError('illegal item position {}'.format(item))
+        if item > self.height * self.width:
+           raise RuntimeError(f'get position out of range {item}')
         try:
             return self.data[item]
         except KeyError:
@@ -69,6 +69,14 @@ class Palette_C_Interface(object):
         self.colors = {}
 
     def __setitem__(self, key, value):
+        if key >= self.num_colors:
+            raise ValueError(f'palette index {key} is greater than allowed by num_colors {self.num_colors}')
+        if not isinstance(value, (bytes, int)):
+            raise ValueError(f'palette color should be bytes, not {type(value)}')
+        if isinstance(value, int) and value > 255:
+            raise ValueError(f'palette color int {value} is too large')
+        if self.colors.get(key):
+            raise ValueError(f'palette color {key} was already set, should not reassign')
         self.colors[key] = value
 
     def validate(self):
@@ -76,10 +84,14 @@ class Palette_C_Interface(object):
             raise ValueError("no palette colors were set")
         if len(self.colors) > self.num_colors:
             raise ValueError("too many colors inserted into palette")
-        if len(self.colors) < self.num_colors:
-            raise ValueError("too few colors inserted into palette")
         for i in range(self.num_colors):
             try:
                 self.colors
             except IndexError:
                 raise ValueError('missing color `{}` in palette color list'.format(i))
+
+    def __str__(self):
+        out = "\nPalette:\n"
+        for y in range(len(self.colors)):
+            out += f" [{y}] {self.colors[y]}\n"
+        return out
