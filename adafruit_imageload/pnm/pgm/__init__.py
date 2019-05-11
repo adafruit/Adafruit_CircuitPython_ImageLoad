@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload.pnm`
+`adafruit_imageload.pnm.pgm`
 ====================================================
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette.
@@ -28,39 +28,40 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-#import logging
+
 
 def load(file, magic_number, header, *, bitmap=None, palette=None):
+    """
+    Perform the load of Netpbm greyscale images
+    :param file: stream resource with the pointer at the start of data
+    :param magic_number: string P2 or P6
+    :param header: list of width, height, max color value
+    :param bitmap: displayio.Bitmap class object
+    :param palette: displayio.Paletta class object
+    :return:
+    """
     if header[2] > 256:
         raise NotImplementedError("16 bit files are not supported")
     width = header[0]
     height = header[1]
 
     data_start = file.tell()  # keep this so we can rewind
-    #bitmap = bitmap(width, height, max_colors)
     palette_colors = set()
 
-    if magic_number == b'P2':  # To handle ascii PGM files.
-        # Handle ascii
-
+    if magic_number == b"P2":  # To handle ascii PGM files.
         pixel = bytearray()
-        byte = True
-        # scan all colors present in the file
-        while byte:
-            byte = file.read(1)  # type: byte
+        # build a set of all colors present in the file, so palette and bitmap can be constructed
+        while True:
+            byte = file.read(1)
+            if byte == b'':
+                break
             if not byte.isdigit():
                 int_pixel = int("".join(["%c" % char for char in pixel]))
-                #logging.info(f'color {pixel} {int_pixel}')
-                #bitmap[x, y] = int_pixel
                 palette_colors.add(int_pixel)
                 pixel = bytearray()
             pixel += byte
-
-        # logging.info(f'{x}, {y}, {byte}, {int_pixel}')
         if palette:
-            palette = palette(len(palette_colors))
-            for counter, color in enumerate(palette_colors):
-                palette[counter] = bytes([color, color, color])
+            palette = build_palette(palette, palette_colors)
         if bitmap:
             bitmap = bitmap(width, height, len(palette_colors))
             palette_colors = list(palette_colors)
@@ -68,37 +69,43 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
             for y in range(height):
                 for x in range(width):
                     pixel = bytearray()
-                    # Takes int and converts to an 8 bit
                     while True:
-                        byte = file.read(1)  # type: byte
+                        byte = file.read(1)
                         if not byte.isdigit():
                             break
                         pixel += byte
-                    # convert b'255' to b'\xff'
-                    color = int("".join(["%c" % char for char in pixel]))
-                    #logging.info(f'found color {color} in palette at {palette_colors.index(color)}')
-                    bitmap[x, y] = palette_colors.index(color)
-
+                    int_pixel = int("".join(["%c" % char for char in pixel]))
+                    bitmap[x, y] = palette_colors.index(int_pixel)
         return bitmap, palette
 
-    if magic_number == b'P5':  # To handle binary PGM files.
-        for y in range(height):
-            for x in range(width):
-                byte = file.read(1)
-                if byte == b"":
-                    raise ValueError("ran out of file unexpectedly")
-                int_pixel = int.from_bytes(byte, "little")
-                bitmap[x, y] = int_pixel
-                palette_colors.add(int_pixel)
+    if magic_number == b"P5":  # To handle binary PGM files.
+        while True:
+            byte = file.read(1)
+            if byte == b'':
+                break
+            int_pixel = int.from_bytes(byte, "little")
+            palette_colors.add(int_pixel)
 
         if palette:
-            palette = palette(len(palette_colors))
-            for counter, color in enumerate(palette_colors):
-                color_bytearray = bytearray()
-                for i in range(3):
-                    color_bytearray += bytes([color])
-                palette[counter] = color_bytearray
-
+            palette = build_palette(palette, palette_colors)
+        if bitmap:
+            bitmap = bitmap(width, height, len(palette_colors))
+            palette_colors = list(palette_colors)
+            file.seek(data_start)
+            for y in range(height):
+                for x in range(width):
+                    byte = file.read(1)
+                    if byte == b"":
+                        raise ValueError("ran out of file unexpectedly")
+                    int_pixel = int.from_bytes(byte, "little")
+                    bitmap[x, y] = palette_colors.index(int_pixel)
         return bitmap, palette
 
     raise NotImplementedError("Was not able to send image")
+
+
+def build_palette(palette_class, palette_colors):
+    palette = palette_class(len(palette_colors))
+    for counter, color in enumerate(palette_colors):
+        palette[counter] = bytes([color, color, color])
+    return palette

@@ -25,7 +25,9 @@ class TestPnmLoad(TestCase):
             "netpbm_p1_mono_ascii.pbm",
         )
         with open(test_file, "rb") as f:
-            bitmap, palette = pnm.load(f, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+            bitmap, palette = pnm.load(
+                f, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(1, bitmap.colors)
         self.assertEqual(13, bitmap.width)

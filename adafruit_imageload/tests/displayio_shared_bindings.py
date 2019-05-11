@@ -1,9 +1,8 @@
-
-
 class Bitmap_C_Interface(object):
     """
     Simulates the displayio.Bitmap class for testing
     """
+
     def __init__(self, width, height, colors):
         self.width = width
         self.height = height
@@ -28,14 +27,14 @@ class Bitmap_C_Interface(object):
         if not isinstance(value, (int)):
             raise RuntimeError(f"set value as int, not {type(value)}")
         if value > 255:
-            raise ValueError(f'pixel value {value} too large')
+            raise ValueError(f"pixel value {value} too large")
         self.data[key] = value
 
     def __getitem__(self, item: tuple) -> bytearray:
         if isinstance(item, tuple):
             return self.__getitem__(self._abs_pos(item[0], item[1]))
         if item > self.height * self.width:
-           raise RuntimeError(f'get position out of range {item}')
+            raise RuntimeError(f"get position out of range {item}")
         try:
             return self.data[item]
         except KeyError:
@@ -64,19 +63,24 @@ class Palette_C_Interface(object):
     """
     Simulates the displayio.Palette class for testing
     """
+
     def __init__(self, num_colors):
         self.num_colors = num_colors
         self.colors = {}
 
     def __setitem__(self, key, value):
         if key >= self.num_colors:
-            raise ValueError(f'palette index {key} is greater than allowed by num_colors {self.num_colors}')
+            raise ValueError(
+                f"palette index {key} is greater than allowed by num_colors {self.num_colors}"
+            )
         if not isinstance(value, (bytes, int)):
-            raise ValueError(f'palette color should be bytes, not {type(value)}')
+            raise ValueError(f"palette color should be bytes, not {type(value)}")
         if isinstance(value, int) and value > 255:
-            raise ValueError(f'palette color int {value} is too large')
+            raise ValueError(f"palette color int {value} is too large")
         if self.colors.get(key):
-            raise ValueError(f'palette color {key} was already set, should not reassign')
+            raise ValueError(
+                f"palette color {key} was already set, should not reassign"
+            )
         self.colors[key] = value
 
     def validate(self):
@@ -88,7 +92,7 @@ class Palette_C_Interface(object):
             try:
                 self.colors
             except IndexError:
-                raise ValueError('missing color `{}` in palette color list'.format(i))
+                raise ValueError("missing color `{}` in palette color list".format(i))
 
     def __str__(self):
         out = "\nPalette:\n"

@@ -11,7 +11,7 @@ class TestBitmap_C(TestCase):
 
     def test_abs(self):
         b = Bitmap_C_Interface(5, 2, 1)
-        self.assertEqual(9, b._abs_pos(4,1))
+        self.assertEqual(9, b._abs_pos(4, 1))
 
     def test_set_tuple(self):
         b = Bitmap_C_Interface(2, 4, 1)

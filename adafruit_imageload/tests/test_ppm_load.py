@@ -6,6 +6,7 @@ from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 logging.getLogger().setLevel(logging.INFO)
 
+
 class TestPpmLoad(TestCase):
     def test_load_works_p3_ascii(self):
         test_file = os.path.join(
@@ -17,7 +18,9 @@ class TestPpmLoad(TestCase):
             "netpbm_p3_rgb_ascii.ppm",
         )
         with open(test_file, "rb") as f:
-            bitmap, palette = pnm.load(f, b"P3", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+            bitmap, palette = pnm.load(
+                f, b"P3", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(16777216, bitmap.colors)
         self.assertEqual(16, bitmap.width)
@@ -36,7 +39,9 @@ class TestPpmLoad(TestCase):
             "netpbm_p6_binary.ppm",
         )
         with open(test_file, "rb") as f:
-            bitmap, palette = pnm.load(f, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+            bitmap, palette = pnm.load(
+                f, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(16777216, bitmap.colors)
         self.assertEqual(16, bitmap.width)
@@ -44,4 +49,3 @@ class TestPpmLoad(TestCase):
         bitmap.validate()
         str(bitmap)
         palette.validate()
-
