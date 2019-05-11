@@ -28,16 +28,15 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-#import logging
+
 
 def load(file, magic_number, header, *, bitmap=None, palette=None):
     # TODO: remove unused variables later
     width = header[0]
     height = header[1]
-    max_colors = header[2]
+    max_colors = 6 #header[2]
     bitmap = bitmap(width, height, max_colors)
     colors = set()
-    pixel = bytearray()
 
 
     if max_colors > 256:
@@ -48,26 +47,23 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
         # Handle ascii
         for y in range(height):
             for x in range(width):
-            # Takes int and converts to an 8 bit
+                pixel = bytearray()
+                # Takes int and converts to an 8 bit
                 while True:
                     byte = file.read(1)  # type: byte
                     if not byte.isdigit():
                         break
                     pixel += byte
-
-                int_pixel = int("".join(["%c" % char for char in pixel]))
+                # convert b'255' to b'\xff'
+                int_pixel = bytes([int("".join(["%c" % char for char in pixel]))])
                 bitmap[x, y] = int_pixel
                 colors.add(int_pixel)
                 # logging.info(f'{x}, {y}, {byte}, {int_pixel}')
         if palette:
             palette = palette(len(colors))
             for counter, color in enumerate(colors):
-                color_bytearray = bytearray()
-                for i in range(3):
-                    color_bytearray += bytes([color])
-                palette[counter] = color_bytearray
+                palette[counter] = color
         return bitmap, palette
-
 
     if magic_number == b'P5': # To handle binary PGM files.
         for y in range(height):
@@ -78,7 +74,6 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
                 int_pixel = int.from_bytes(byte, "little")
                 bitmap[x, y] = int_pixel
                 colors.add(int_pixel)
-
 
         if palette:
             palette = palette(len(colors))
