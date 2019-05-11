@@ -33,37 +33,58 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-import struct
 
+def load(file, width, height, bitmap=None, palette=None):
+    """
 
-def load(file, width, height, max_colors, bitmap=None, palette=None):
-    """Load an ascii ppm into the Bitmap object"""
+    :param stream file: infile with the position set at start of data
+    :param int width:
+    :param int height:
+    :param int max_colors: color space of file
+    :param bitmap: displayio.Bitmap class
+    :param palette: displayio.Palette class
+    :return:
+    """
+    palette_colors = set()
+    data_start = file.tell()
+    triplet = []
+    color = bytearray()
+    while True:  # scan for all colors present in the file
+        # read values from file, values can be string len 1-3 for values 0 - 255
+        this_byte = file.read(1)
+        if this_byte == b'':
+            break
+        if not this_byte.isdigit():  # completed one number
+            triplet.append(int("".join(["%c" % char for char in color])))
+            color = bytearray()
+            if len(triplet) == 3:
+                palette_colors.add(tuple(triplet))
+                triplet = []
+            continue
+        color += this_byte
+    if palette:
+        palette = palette(len(palette_colors))
+        for counter, color in enumerate(palette_colors):
+            palette[counter] = bytes(color)
+
     if bitmap:
+        file.seek(data_start)
+        bitmap = bitmap(width, height, len(palette_colors))
+        palette_colors = list(palette_colors)
         for y in range(height):
-            offset = y * width
             for x in range(width):
                 triplet = []
                 color = bytearray()
                 while True:
-                    if len(triplet) == 3:
-                        break
                     this_byte = file.read(1)
-                    if this_byte.isdigit():
-                        color += this_byte
-                    else:
-                        triplet.append(color)
+
+                    if not this_byte.isdigit():  # completed one number
+                        triplet.append(int("".join(["%c" % char for char in color])))
                         color = bytearray()
+                        if len(triplet) == 3:  # completed one pixel
+                            bitmap[x, y] = palette_colors.index(tuple(triplet))
+                            break
                         continue
-                pixel = bytearray(3)
-                # This just became 8-bit only...
-                struct.pack_into(
-                    "BBB",
-                    pixel,
-                    0,
-                    int("".join(["%c" % char for char in triplet[0]])),
-                    int("".join(["%c" % char for char in triplet[1]])),
-                    int("".join(["%c" % char for char in triplet[2]])),
-                )
-                bitmap[offset + x] = int.from_bytes(pixel, "little")
+                    color += this_byte
 
     return bitmap, palette

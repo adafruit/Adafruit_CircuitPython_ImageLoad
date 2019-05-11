@@ -17,16 +17,19 @@ class TestPpmLoad(TestCase):
             "images",
             "netpbm_p3_rgb_ascii.ppm",
         )
-        with open(test_file, "rb") as f:
+        with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
-                f, b"P3", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+                file, b"P3", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
+
+        self.assertTrue(isinstance(palette, Palette_C_Interface))
+        self.assertEqual(6, palette.num_colors)
+        #self.fail(str(palette))
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
-        self.assertEqual(16777216, bitmap.colors)
+        self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
         self.assertEqual(16, bitmap.height)
         bitmap.validate()
-        str(bitmap)
         palette.validate()
 
     def test_load_works_p6_binary(self):
