@@ -11,9 +11,9 @@ class Bitmap_C_Interface(object):
         self.data = {}
 
     def _abs_pos(self, width: int, height: int) -> int:
-        if height > self.height - 1:
+        if height >= self.height:
             raise ValueError("height > max")
-        if width > self.width - 1:
+        if width >= self.width:
             raise ValueError("width > max")
         return width + (height * self.width)
 
@@ -25,11 +25,9 @@ class Bitmap_C_Interface(object):
             # order is X, Y from the docs https://github.com/adafruit/circuitpython/blob/master/shared-bindings/displayio/Bitmap.c
             self.__setitem__(self._abs_pos(key[0], key[1]), value)
             return
-        if not isinstance(value, (int,bytes)):
+        if not isinstance(value, (int)):
             raise RuntimeError(f"set value as int or bytes, not {type(value)}")
-        if isinstance(value, int) and value > 255:
-            raise ValueError(f'pixel value {value} too large')
-        if isinstance(value, bytes) and value > b'\xff':
+        if value > 255:
             raise ValueError(f'pixel value {value} too large')
         self.data[key] = value
 
