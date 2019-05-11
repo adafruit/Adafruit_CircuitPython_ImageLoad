@@ -48,7 +48,7 @@ def load(file, header, *, bitmap=None, palette=None):
             bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
             if palette:
                 palette = palette(1)
-                palette[0] = 0xFFFFFF
+                palette[0] = 0xFF
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 

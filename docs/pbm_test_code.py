@@ -1,5 +1,5 @@
 """
-Testing script for PBM
+This is a hardware testing script for PBM
 Tested with Feather M4 Express and 2.4" Featherwing
 1. Flash board to 4x
 2. add 'adafruit_ili9341.mpy' for 4x firmware to /lib/ on board
@@ -26,10 +26,11 @@ display = adafruit_ili9341.ILI9341(display_bus, width=320, height=240)
 # Make the display context
 splash = displayio.Group(max_size=10)
 display.show(splash)
-
+#image = "images/netpbm_p1_mono_ascii.pbm"
+image = "images/netpbm_p4_mono_binary.pbm"
 
 bitmap, palette = adafruit_imageload.load(
-    "images/netpbm_p1_mono.pbm", bitmap=displayio.Bitmap, palette=displayio.Palette
+    image, bitmap=displayio.Bitmap, palette=displayio.Palette
 )
 
 

@@ -154,7 +154,7 @@ class TestPnmLoad(TestCase):
             "..",
             "examples",
             "images",
-            "netpbm_p1_mono.pbm",
+            "netpbm_p1_mono_ascii.pbm",
         )
         with open(test_file, "rb") as f:
             bitmap, palette = pnm.load(f, b"P1", bitmap=Bitmap_C_Interface)
@@ -182,7 +182,7 @@ class TestPnmLoad(TestCase):
             "..",
             "examples",
             "images",
-            "netpbm_p4_mono.pbm",
+            "netpbm_p4_mono_binary.pbm",
         )
         with open(test_file, "rb") as f:
             bitmap, palette = pnm.load(f, b"P4", bitmap=Bitmap_C_Interface)
@@ -205,8 +205,8 @@ class TestPnmLoad(TestCase):
             bitmap, palette = pnm.load(f, b"P4", bitmap=Bitmap_C_Interface)
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface))
         self.assertEqual(1, bitmap.colors)
-        self.assertEqual(1920, bitmap.width)
-        self.assertEqual(1080, bitmap.height)
+        self.assertEqual(320, bitmap.width)
+        self.assertEqual(240, bitmap.height)
 
 
 class TestPPMLoad(TestCase):
