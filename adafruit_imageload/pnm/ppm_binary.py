@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload.pnm.ppm.ppm_ascii`
+`adafruit_imageload.pnm.ppm_binary`
 ====================================================
 
-Load pixel values (indices or colors) into a bitmap and for an ascii ppm,
+Load pixel values (indices or colors) into a bitmap and for a binary ppm,
 return None for pallet.
 
 * Author(s):  Matt Land, Brooke Storm, Sam McGahan
@@ -35,56 +35,35 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(file, width, height, bitmap=None, palette=None):
-    """
+    """Load pixel values (indices or colors) into a bitmap and for a binary
+    ppm, return None for pallet."""
 
-    :param stream file: infile with the position set at start of data
-    :param int width:
-    :param int height:
-    :param int max_colors: color space of file
-    :param bitmap: displayio.Bitmap class
-    :param palette: displayio.Palette class
-    :return:
-    """
-    palette_colors = set()
     data_start = file.tell()
-    triplet = []
-    color = bytearray()
-    while True:  # scan for all colors present in the file
-        # read values from file, values can be string len 1-3 for values 0 - 255
-        this_byte = file.read(1)
-        if this_byte == b'':
-            break
-        if not this_byte.isdigit():  # completed one number
-            triplet.append(int("".join(["%c" % char for char in color])))
-            color = bytearray()
-            if len(triplet) == 3:
-                palette_colors.add(tuple(triplet))
-                triplet = []
-            continue
-        color += this_byte
+    palette_colors = set()
+    line_size = width * 3
+
+    for y in range(height):
+        data_line = iter(bytes(file.read(line_size)))
+        for red in data_line:
+            green = next(data_line)
+            blue = next(data_line)
+            palette_colors.add((red, green, blue))
+
     if palette:
         palette = palette(len(palette_colors))
         for counter, color in enumerate(palette_colors):
             palette[counter] = bytes(color)
-
     if bitmap:
-        file.seek(data_start)
         bitmap = bitmap(width, height, len(palette_colors))
+        file.seek(data_start)
         palette_colors = list(palette_colors)
         for y in range(height):
-            for x in range(width):
-                triplet = []
-                color = bytearray()
-                while True:
-                    this_byte = file.read(1)
-
-                    if not this_byte.isdigit():  # completed one number
-                        triplet.append(int("".join(["%c" % char for char in color])))
-                        color = bytearray()
-                        if len(triplet) == 3:  # completed one pixel
-                            bitmap[x, y] = palette_colors.index(tuple(triplet))
-                            break
-                        continue
-                    color += this_byte
+            x = 0
+            data_line = iter(bytes(file.read(line_size)))
+            for red in data_line:
+                green = next(data_line)
+                blue = next(data_line)
+                bitmap[x,y] = palette_colors.index((red, green, blue))
+                x += 1
 
     return bitmap, palette

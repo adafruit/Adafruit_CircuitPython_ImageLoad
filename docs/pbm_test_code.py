@@ -30,7 +30,8 @@ display.show(splash)
 #image = "images/netpbm_p4_mono_binary.pbm"
 #image = "images/netpbm_p2_ascii.pgm"
 #image = "images/netpbm_p5_binary.pgm"
-image = "images/netpbm_p3_rgb_ascii.ppm"
+#image = "images/netpbm_p3_rgb_ascii.ppm"
+image = "images/netpbm_p6_binary.ppm"
 
 bitmap, palette = adafruit_imageload.load(
     image, bitmap=displayio.Bitmap, palette=displayio.Palette

@@ -91,9 +91,14 @@ def load(file, header, *, bitmap=None, palette=None):
 
         return pgm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
-    if magic_number.startswith(b"P3") or magic_number.startswith(b"P6"):
-        from . import ppm
+    if magic_number.startswith(b"P3"):
+        from . import ppm_ascii
 
-        return ppm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
+        return ppm_ascii.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
+
+    if magic_number.startswith(b"P6"):
+        from . import ppm_binary
+
+        return ppm_binary.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
 
     raise RuntimeError("Unsupported image format")

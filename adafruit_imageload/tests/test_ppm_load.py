@@ -46,7 +46,7 @@ class TestPpmLoad(TestCase):
                 f, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
-        self.assertEqual(16777216, bitmap.colors)
+        self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
         self.assertEqual(16, bitmap.height)
         bitmap.validate()
