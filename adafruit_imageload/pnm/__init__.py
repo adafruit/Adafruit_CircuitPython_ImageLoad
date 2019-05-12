@@ -42,11 +42,11 @@ def load(file, header, *, bitmap=None, palette=None):
         # We have all we need at length 3 for formats P2, P3, P5, P6
         if len(pnm_header) == 3:
             break
-        if len(pnm_header) == 2 and magic_number in [b"P1",  b"P4"]:
+        if len(pnm_header) == 2 and magic_number in [b"P1", b"P4"]:
             bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
             if palette:
                 palette = palette(1)
-                palette[0] = 0xFF
+                palette[0] = b"\xFF\xFF\xFF"
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 

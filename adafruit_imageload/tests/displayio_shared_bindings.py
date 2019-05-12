@@ -83,6 +83,15 @@ class Palette_C_Interface(object):
             )
         self.colors[key] = value
 
+    def __getitem__(self, item):
+        if item >= self.num_colors:
+            raise ValueError(
+                f"palette index {item} should be less than {self.num_colors}"
+            )
+        if not self.colors.get(item):
+            raise ValueError(f"palette index {item} is not set")
+        return self.colors[item]
+
     def validate(self):
         if not self.colors:
             raise ValueError("no palette colors were set")

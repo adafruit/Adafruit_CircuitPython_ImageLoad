@@ -61,13 +61,14 @@ class TestPnmLoad(TestCase):
             bitmap, palette = pnm.load(
                 f, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
+        self.assertEqual(1, palette.num_colors)
+        palette.validate()
+        self.assertEqual(b"\xff\xff\xff", palette[0])
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface))
         self.assertEqual(1, bitmap.colors)
         self.assertEqual(32, bitmap.width)
         self.assertEqual(15, bitmap.height)
         bitmap.validate()
-        self.assertEqual(1, palette.num_colors)
-        palette.validate()
 
     def test_load_works_p4_binary_high_res(self):
         test_file = os.path.join(

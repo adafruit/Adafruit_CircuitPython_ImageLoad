@@ -41,7 +41,6 @@ class TestPgmLoad(TestCase):
                 f, b"P5", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
-        # self.fail(str(palette))
 
         self.assertEqual(8, palette.num_colors)
         palette.validate()
