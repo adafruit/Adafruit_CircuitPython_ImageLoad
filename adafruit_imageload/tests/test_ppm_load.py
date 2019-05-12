@@ -1,10 +1,7 @@
 import os
-import logging
 from unittest import TestCase
 from adafruit_imageload import pnm
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
-
-logging.getLogger().setLevel(logging.INFO)
 
 
 class TestPpmLoad(TestCase):
@@ -24,13 +21,13 @@ class TestPpmLoad(TestCase):
 
         self.assertTrue(isinstance(palette, Palette_C_Interface))
         self.assertEqual(6, palette.num_colors)
-        #self.fail(str(palette))
+        palette.validate()
+        # self.fail(str(palette))
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
         self.assertEqual(16, bitmap.height)
         bitmap.validate()
-        palette.validate()
 
     def test_load_works_p6_binary(self):
         test_file = os.path.join(
@@ -45,10 +42,10 @@ class TestPpmLoad(TestCase):
             bitmap, palette = pnm.load(
                 f, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
+        self.assertEqual(6, palette.num_colors)
+        palette.validate()
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
         self.assertEqual(16, bitmap.height)
         bitmap.validate()
-        str(bitmap)
-        palette.validate()

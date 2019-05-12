@@ -39,12 +39,10 @@ def load(file, header, *, bitmap=None, palette=None):
     file.seek(2)
     pnm_header = []
     while True:
-        # We have all we need at length 3
+        # We have all we need at length 3 for formats P2, P3, P5, P6
         if len(pnm_header) == 3:
             break
-        if len(pnm_header) == 2 and (
-            magic_number.startswith(b"P1") or magic_number.startswith(b"P4")
-        ):
+        if len(pnm_header) == 2 and magic_number in [b"P1",  b"P4"]:
             bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
             if palette:
                 palette = palette(1)
@@ -86,19 +84,23 @@ def load(file, header, *, bitmap=None, palette=None):
         if not next_byte:
             raise RuntimeError("Unsupported image format")
 
-    if magic_number.startswith(b"P2") or magic_number.startswith(b"P5"):
+    if magic_number in [b"P2", b"P5"]:
         from . import pgm
 
         return pgm.load(file, magic_number, pnm_header, bitmap=bitmap, palette=palette)
 
-    if magic_number.startswith(b"P3"):
+    if magic_number == b"P3":
         from . import ppm_ascii
 
-        return ppm_ascii.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
+        return ppm_ascii.load(
+            file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+        )
 
-    if magic_number.startswith(b"P6"):
+    if magic_number == b"P6":
         from . import ppm_binary
 
-        return ppm_binary.load(file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette)
+        return ppm_binary.load(
+            file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+        )
 
     raise RuntimeError("Unsupported image format {}".format(magic_number))

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload.pnm.pbm.binary`
+`adafruit_imageload.pnm.pbm_binary`
 ====================================================
 
 Load pixel values (indices or colors) into a bitmap and for an ascii ppm,

@@ -63,7 +63,7 @@ def load(file, width, height, bitmap=None, palette=None):
             for red in data_line:
                 green = next(data_line)
                 blue = next(data_line)
-                bitmap[x,y] = palette_colors.index((red, green, blue))
+                bitmap[x, y] = palette_colors.index((red, green, blue))
                 x += 1
 
     return bitmap, palette

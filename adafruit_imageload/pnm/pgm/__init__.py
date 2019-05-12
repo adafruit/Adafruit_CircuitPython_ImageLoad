@@ -37,7 +37,7 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
     :param magic_number: string P2 or P6
     :param header: list of width, height, max color value
     :param bitmap: displayio.Bitmap class object
-    :param palette: displayio.Paletta class object
+    :param palette: displayio.Palette class object
     :return:
     """
     if header[2] > 256:
@@ -53,7 +53,7 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
         # build a set of all colors present in the file, so palette and bitmap can be constructed
         while True:
             byte = file.read(1)
-            if byte == b'':
+            if byte == b"":
                 break
             if not byte.isdigit():
                 int_pixel = int("".join(["%c" % char for char in pixel]))
@@ -81,7 +81,7 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
     if magic_number == b"P5":  # To handle binary PGM files.
         while True:
             byte = file.read(1)
-            if byte == b'':
+            if byte == b"":
                 break
             int_pixel = int.from_bytes(byte, "little")
             palette_colors.add(int_pixel)

@@ -52,7 +52,7 @@ def load(file, width, height, bitmap=None, palette=None):
     while True:  # scan for all colors present in the file
         # read values from file, values can be string len 1-3 for values 0 - 255
         this_byte = file.read(1)
-        if this_byte == b'':
+        if this_byte == b"":
             break
         if not this_byte.isdigit():  # completed one number
             triplet.append(int("".join(["%c" % char for char in color])))

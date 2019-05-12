@@ -2,7 +2,7 @@ from unittest import TestCase
 from .displayio_shared_bindings import Bitmap_C_Interface
 
 
-class TestBitmap_C(TestCase):
+class TestBitmap_C_Interface(TestCase):
     def test_init(self):
         b = Bitmap_C_Interface(2, 4, 1)
         self.assertEqual(2, b.width)
