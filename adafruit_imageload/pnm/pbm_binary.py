@@ -56,5 +56,8 @@ def load(file, width, height, bitmap=None, palette=None):
 
 
 def iterbits(b):
+    """
+    generator to iterate over the bits in a byte (character)
+    """
     for i in range(8):
         yield (b >> i) & 1

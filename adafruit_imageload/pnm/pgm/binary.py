@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload.pnm.pgm`
+`adafruit_imageload.pnm.pgm.binary`
 ====================================================
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette.
@@ -30,21 +30,35 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 """
 
 
-def load(file, magic_number, header, *, bitmap=None, palette=None):
+def load(file, width, height, bitmap=None, palette=None):
     """
-    Perform the load of Netpbm greyscale images (P2, P5)
+    Load a P5 format file (binary), handle PGM (greyscale)
     """
-    if header[2] > 256:
-        raise NotImplementedError("16 bit files are not supported")
-    width = header[0]
-    height = header[1]
+    palette_colors = set()
+    data_start = file.tell()
+    for y in range(height):
+        data_line = iter(bytes(file.read(width)))
+        for pixel in data_line:
+            palette_colors.add(pixel)
 
-    if magic_number == b"P2":  # To handle ascii PGM files.
-        from . import ascii as pgm_ascii
-        return pgm_ascii.load(file, width, height, bitmap=bitmap, palette=palette)
+    if palette:
+        palette = build_palette(palette, palette_colors)
+    if bitmap:
+        bitmap = bitmap(width, height, len(palette_colors))
+        palette_colors = list(palette_colors)
+        file.seek(data_start)
+        for y in range(height):
+            data_line = iter(bytes(file.read(width)))
+            for x, pixel in enumerate(data_line):
+                bitmap[x, y] = palette_colors.index(pixel)
+    return bitmap, palette
 
-    if magic_number == b"P5":  # To handle binary PGM files.
-        from . import binary
-        return binary.load(file, width, height, bitmap=bitmap, palette=palette)
 
-    raise NotImplementedError("Was not able to send image")
+def build_palette(palette_class, palette_colors):
+    """
+    construct the Palette, and populate it with the set of palette_colors
+    """
+    palette = palette_class(len(palette_colors))
+    for counter, color in enumerate(palette_colors):
+        palette[counter] = bytes([color, color, color])
+    return palette

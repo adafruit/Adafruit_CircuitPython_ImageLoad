@@ -7,12 +7,12 @@ from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 class TestPnmLoad(TestCase):
     def test_load_fails_with_no_header_data(self):
-        f = BytesIO(b"some initial binary data: \x00\x01")
+        file = BytesIO(b"some initial binary data: \x00\x01")
         try:
-            pnm.load(f, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+            pnm.load(file, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
             self.fail("should have failed")
-        except Exception as e:
-            if "Unsupported image format" not in str(e):
+        except Exception as caught_exception:
+            if "Unsupported image format" not in str(caught_exception):
                 raise
 
     def test_load_works_p1_ascii(self):
@@ -41,12 +41,13 @@ class TestPnmLoad(TestCase):
         palette.validate()
 
     def test_load_works_p4_in_mem(self):
-        f = BytesIO(b"P4\n4 2\n\x55")
-        bitmap, palette = pnm.load(f, b"P4", bitmap=Bitmap_C_Interface)
+        file = BytesIO(b"P4\n4 2\n\x55")
+        bitmap, palette = pnm.load(file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
         self.assertEqual(4, bitmap.width)
         self.assertEqual(2, bitmap.height)
         bitmap.validate()
         self.assertEqual("\n   1   0   1   0\n   1   0   1   0\n", str(bitmap))
+        palette.validate()
 
     def test_load_works_p4_binary(self):
         test_file = os.path.join(
