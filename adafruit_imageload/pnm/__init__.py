@@ -34,7 +34,12 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(file, header, *, bitmap=None, palette=None):
-    # Read the header
+    """
+    Scan for netpbm format info, skip over comments, and and delegate to a submodule
+    to do the actual data loading.
+    Formats P1, P4 have two space padded pieces of information: width and height.
+    All other formats have three: width, height, and max color value.
+    """
     magic_number = header[:2]
     file.seek(2)
     pnm_header = []

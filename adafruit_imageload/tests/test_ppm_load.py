@@ -38,9 +38,9 @@ class TestPpmLoad(TestCase):
             "images",
             "netpbm_p6_binary.ppm",
         )
-        with open(test_file, "rb") as f:
+        with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
-                f, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+                file, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertEqual(6, palette.num_colors)
         palette.validate()

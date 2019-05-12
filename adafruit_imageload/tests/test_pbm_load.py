@@ -24,9 +24,9 @@ class TestPnmLoad(TestCase):
             "images",
             "netpbm_p1_mono_ascii.pbm",
         )
-        with open(test_file, "rb") as f:
+        with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
-                f, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+                file, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(1, bitmap.colors)
@@ -57,9 +57,9 @@ class TestPnmLoad(TestCase):
             "images",
             "netpbm_p4_mono_binary.pbm",
         )
-        with open(test_file, "rb") as f:
+        with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
-                f, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+                file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertEqual(1, palette.num_colors)
         palette.validate()
@@ -79,9 +79,9 @@ class TestPnmLoad(TestCase):
             "images",
             "netpbm_p4_mono_large.pbm",
         )
-        with open(test_file, "rb") as f:
+        with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
-                f, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+                file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface))
         self.assertEqual(1, bitmap.colors)
