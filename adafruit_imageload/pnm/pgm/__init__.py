@@ -79,12 +79,10 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
         return bitmap, palette
 
     if magic_number == b"P5":  # To handle binary PGM files.
-        while True:
-            byte = file.read(1)
-            if byte == b"":
-                break
-            int_pixel = int.from_bytes(byte, "little")
-            palette_colors.add(int_pixel)
+        for y in range(height):
+            data_line = iter(bytes(file.read(width)))
+            for pixel in data_line:
+                palette_colors.add(pixel)
 
         if palette:
             palette = build_palette(palette, palette_colors)
@@ -93,12 +91,9 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
             palette_colors = list(palette_colors)
             file.seek(data_start)
             for y in range(height):
-                for x in range(width):
-                    byte = file.read(1)
-                    if byte == b"":
-                        raise ValueError("ran out of file unexpectedly")
-                    int_pixel = int.from_bytes(byte, "little")
-                    bitmap[x, y] = palette_colors.index(int_pixel)
+                data_line = iter(bytes(file.read(width)))
+                for x, pixel in enumerate(data_line):
+                    bitmap[x, y] = palette_colors.index(pixel)
         return bitmap, palette
 
     raise NotImplementedError("Was not able to send image")
