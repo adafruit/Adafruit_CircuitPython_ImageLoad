@@ -102,16 +102,16 @@ The corresponding Bitmap to the example above appears like this after loading::
     4   4   4   5   5   5  12  12  12   5   5   5   7   7   7
     5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
 
-This grid represents the example image (`15 pixels wide` and  `17 pixels tall`).
-The coordinates are arranged in a zero indexed grid, starting in the top left at `[0,0]`,
-and continuing down and to the right to a final coordinate of `[14,16]`.
+This grid represents the example image (**15 pixels wide** and  **17 pixels tall**).
+The coordinates are arranged in a zero indexed grid, starting in the top left at **[0,0]**,
+and continuing down and to the right to a final coordinate of **[14,16]**.
 
 
 The value at each position is an integer, representing an entry in the palette object.
 
 
 
-For example, the Bitmap coordinate `[0,0]` has the value (integer) `5`.
+For example, the Bitmap coordinate **[0,0]** has the value (integer) **5**.
 
 
-This corresponds to the the Palette object's, `[5]` which is `b'\x00\x00\xff\x00'`. This is a byte string that represents a color.
+This corresponds to the the Palette object's, **[5]** which is **b'\x00\x00\xff\x00'**. This is a byte string that represents a color.
