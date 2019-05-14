@@ -24,6 +24,12 @@ Table of Contents
     :caption: Tutorials
 
 .. toctree::
+    :caption: Development
+    :maxdepth: 3
+
+    developing
+
+.. toctree::
     :caption: Related Products
 
 .. toctree::
