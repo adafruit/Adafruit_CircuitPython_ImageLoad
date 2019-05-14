@@ -46,12 +46,12 @@ def load(file, *, bitmap=None, palette=None):
     # f.seek(14)
     # bmp_header_length = int.from_bytes(file.read(4), 'little')
     # print(bmp_header_length)
-    file.seek(18)
+    file.seek(0x12) # Width of the bitmap in pixels
     width = int.from_bytes(file.read(4), 'little')
     height = int.from_bytes(file.read(4), 'little')
-    file.seek(28)
+    file.seek(0x1c) # Number of bits per pixel
     color_depth = int.from_bytes(file.read(2), 'little')
-    file.seek(46)
+    file.seek(0x2e) # Number of colors in the color palette
     colors = int.from_bytes(file.read(4), 'little')
 
     if colors == 0 and color_depth >= 16:
