@@ -1,3 +1,15 @@
+"""
+The classes in this file are designed to emulate Circuitpython's displayio classes
+for Bitmap and Palette. These mimic classes should have the same methods and interface as the real interface,
+but with extra validation checks, warnings, and messages to facilitate debugging.
+
+Code that can be run successfully against these classes will have a good chance of
+ working correctly on hardware running Circuitpython, but without needing to upload code to a board
+ after each attempt.
+
+"""
+
+
 class Bitmap_C_Interface(object):
     """
     Simulates the displayio.Bitmap class for testing
