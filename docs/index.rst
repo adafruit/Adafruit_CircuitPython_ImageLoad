@@ -21,14 +21,15 @@ Table of Contents
     api
 
 .. toctree::
-    :caption: Developing
-
-    developing
-
-.. toctree::
     :caption: Tutorials
 
     CircuitPython displayio Setup for TFT FeatherWings <https://learn.adafruit.com/using-circuitpython-displayio-with-a-tft-featherwing>
+
+.. toctree::
+    :caption: Development
+    :maxdepth: 3
+
+    developing
 
 .. toctree::
     :caption: Related Products
