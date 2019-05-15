@@ -5,7 +5,7 @@ from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
 class TestBmpIndexedLoad(TestCase):
-    def test_load_works_p1_ascii(self):
+    def test_order_bgra_to_rgba(self):
         test_file = os.path.join(
             os.path.dirname(__file__), "..", "..", "examples", "images", "4bit.bmp"
         )
@@ -26,5 +26,7 @@ class TestBmpIndexedLoad(TestCase):
 
         self.assertEqual(16, palette.num_colors)
         palette.validate()
+        # make sure bye order swapped
+        self.assertTrue(palette[4] in [b'\x9d\x00\xff\x00', b'\x9d\x00\xff'])
         # uncomment line below to see a string representation of the object
-        # self.fail(str(palette))
+        #self.fail(str(palette))
