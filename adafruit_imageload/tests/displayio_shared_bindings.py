@@ -75,6 +75,8 @@ class Bitmap_C_Interface(object):
             raise RuntimeError(f"set value as int, not {type(value)}")
         if value > 255:
             raise ValueError(f"pixel value {value} too large")
+        if self.data.get(key):
+            raise ValueError(f"pixel {self._decode(key)}/{key} already set, cannot set again")
         self.data[key] = value
 
     def __getitem__(self, item: Union[tuple, int]) -> bytearray:
@@ -87,18 +89,22 @@ class Bitmap_C_Interface(object):
         except KeyError:
             raise RuntimeError("no data at {} [{}]".format(self._decode(item), item))
 
-    def validate(self) -> None:
+    def validate(self, detect_empty_image=True) -> None:
         """
         method to to make sure all pixels allocated in the Bitmap
         were set with a value
         """
+        seen_colors = set()
         if not self.data:
             raise ValueError("no rows were set / no data in memory")
-        for i in range(self.height * self.width, 0):
-            try:
-                self.data[i]
-            except KeyError:
-                raise ValueError("missing data at {i}")
+        for y in range(self.height):
+            for x in range(self.width):
+                try:
+                    seen_colors.add(self[x,y])
+                except KeyError:
+                    raise ValueError(f"missing data at {x},{y}")
+        if detect_empty_image and len(seen_colors) < 2:
+            raise ValueError('image detected as only one color. set detect_empty_image=False to ignore')
 
     def __str__(self) -> str:
         """

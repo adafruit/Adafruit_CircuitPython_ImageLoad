@@ -41,10 +41,12 @@ def load(file, magic_number, header, *, bitmap=None, palette=None):
 
     if magic_number == b"P2":  # To handle ascii PGM files.
         from . import ascii as pgm_ascii
+
         return pgm_ascii.load(file, width, height, bitmap=bitmap, palette=palette)
 
     if magic_number == b"P5":  # To handle binary PGM files.
         from . import binary
+
         return binary.load(file, width, height, bitmap=bitmap, palette=palette)
 
     raise NotImplementedError("Was not able to send image")

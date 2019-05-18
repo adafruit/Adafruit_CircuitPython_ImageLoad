@@ -45,9 +45,8 @@ def load(file, width, height, bitmap=None, palette=None):
     for y in range(height):
         data_line = iter(bytes(file.read(line_size)))
         for red in data_line:
-            green = next(data_line)
-            blue = next(data_line)
-            palette_colors.add((red, green, blue))
+            # red, green, blue
+            palette_colors.add((red, next(data_line), next(data_line)))
 
     if palette:
         palette = palette(len(palette_colors))
@@ -61,9 +60,10 @@ def load(file, width, height, bitmap=None, palette=None):
             x = 0
             data_line = iter(bytes(file.read(line_size)))
             for red in data_line:
-                green = next(data_line)
-                blue = next(data_line)
-                bitmap[x, y] = palette_colors.index((red, green, blue))
+                # red, green, blue
+                bitmap[x, y] = palette_colors.index(
+                    (red, next(data_line), next(data_line))
+                )
                 x += 1
 
     return bitmap, palette

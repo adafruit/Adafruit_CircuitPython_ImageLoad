@@ -56,9 +56,9 @@ def load(file, *, bitmap=None, palette=None):
 
     if colors == 0 and color_depth >= 16:
         raise NotImplementedError("True color BMP unsupported")
-    else:
-        if colors == 0:
-            colors = 2 ** color_depth
-        from . import indexed
-        return indexed.load(file, width, height, data_start, colors, color_depth, bitmap=bitmap,
-                            palette=palette)
+
+    if colors == 0:
+        colors = 2 ** color_depth
+    from . import indexed
+    return indexed.load(file, width, height, data_start, colors, color_depth, bitmap=bitmap,
+                        palette=palette)

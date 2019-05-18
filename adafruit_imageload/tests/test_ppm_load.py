@@ -27,8 +27,10 @@
 
 """
 import os
+from io import BytesIO
 from unittest import TestCase
 from .. import pnm
+from ..pnm.ppm_ascii import read_three_colors
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
@@ -45,12 +47,12 @@ class TestPpmLoad(TestCase):
         with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
                 file, b"P3", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
-            )
+            )  # type: Bitmap_C_Interface, Palette_C_Interface
 
         self.assertTrue(isinstance(palette, Palette_C_Interface))
         self.assertEqual(6, palette.num_colors)
         palette.validate()
-        # self.fail(str(palette))
+        #self.fail(str(palette))
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
@@ -69,7 +71,7 @@ class TestPpmLoad(TestCase):
         with open(test_file, "rb") as file:
             bitmap, palette = pnm.load(
                 file, b"P6", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
-            )
+            )  # type: Bitmap_C_Interface, Palette_C_Interface
         self.assertEqual(6, palette.num_colors)
         palette.validate()
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
@@ -77,3 +79,14 @@ class TestPpmLoad(TestCase):
         self.assertEqual(16, bitmap.width)
         self.assertEqual(16, bitmap.height)
         bitmap.validate()
+
+    def test_load_three_colors_tail(self):
+        buffer = BytesIO(b'211 222 233')
+        for i in read_three_colors(buffer):
+            self.assertEqual(b'\xd3\xde\xe9', i)
+
+    def test_load_three_colors_middle(self):
+        buffer = BytesIO(b'0 128 255 45 55 25')
+        for i in iter(read_three_colors(buffer)):
+            self.assertEqual(b'\x00\x80\xff', i)
+            break
