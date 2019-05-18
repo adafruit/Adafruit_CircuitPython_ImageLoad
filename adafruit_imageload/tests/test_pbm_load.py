@@ -30,10 +30,11 @@ import os
 from io import BytesIO
 from unittest import TestCase
 from .. import pnm
+from ..pnm.pbm_binary import iterbits, reverse
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
-class TestPnmLoad(TestCase):
+class TestPbmLoad(TestCase):
     def test_load_fails_with_no_header_data(self):
         file = BytesIO(b"some initial binary data: \x00\x01")
         try:
@@ -78,7 +79,7 @@ class TestPnmLoad(TestCase):
         self.assertEqual(4, bitmap.width)
         self.assertEqual(2, bitmap.height)
         bitmap.validate()
-        self.assertEqual("\n   1   0   1   0\n   1   0   1   0\n", str(bitmap))
+        self.assertEqual("\n   0   1   0   1\n   0   1   0   1\n", str(bitmap))
         palette.validate()
 
     def test_load_works_p4_binary(self):
@@ -123,3 +124,18 @@ class TestPnmLoad(TestCase):
         bitmap.validate()
         self.assertEqual(1, palette.num_colors)
         palette.validate()
+
+    def test_iterbits(self):
+        k = b'k'
+        bits = []
+        for byte in iterbits(k):
+            bits.append(byte)
+        #self.assertEqual([0,1,1,0,1,0,1,1], bits[::-1])
+        self.assertEqual([0,1,1,0,1,0,1,1], bits)
+
+    def test_reverse(self):
+        # 00110100 to 00101100
+        self.assertEqual(reverse(0x34), 0x2C)
+        self.assertEqual(reverse(0xFF), 0xFF)
+        self.assertEqual(reverse(0x00), 0x00)
+        self.assertEqual(reverse(0x0E), 0x70)

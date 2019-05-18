@@ -44,7 +44,7 @@ def load(file, width, height, bitmap=None, palette=None):
         next_byte = file.read(1)
         if not next_byte:
             break  # out of bits
-        for bit in iterbits(int.from_bytes(next_byte, "little")):
+        for bit in iterbits(next_byte):
             bitmap[x, y] = bit
             x += 1
             if x > width - 1:
@@ -59,5 +59,16 @@ def iterbits(b):
     """
     generator to iterate over the bits in a byte (character)
     """
+    in_char = reverse(int.from_bytes(b, "little"))
     for i in range(8):
-        yield (b >> i) & 1
+        yield (in_char >> i) & 1
+
+
+def reverse(b):
+    """
+    reverse bit order so the iterbits works
+    """
+    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4
+    b = (b & 0xCC) >> 2 | (b & 0x33) << 2
+    b = (b & 0xAA) >> 1 | (b & 0x55) << 1
+    return b
