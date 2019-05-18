@@ -1,7 +1,35 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2019 Matt Land
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""
+`adafruit_imageload.tests.test_pbm_load`
+====================================================
+
+* Author(s):  Matt Land
+
+"""
 import os
 from io import BytesIO
 from unittest import TestCase
-from adafruit_imageload import pnm
+from .. import pnm
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
@@ -9,7 +37,9 @@ class TestPnmLoad(TestCase):
     def test_load_fails_with_no_header_data(self):
         file = BytesIO(b"some initial binary data: \x00\x01")
         try:
-            pnm.load(file, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+            pnm.load(
+                file, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            )
             self.fail("should have failed")
         except Exception as caught_exception:
             if "Unsupported image format" not in str(caught_exception):
@@ -42,7 +72,9 @@ class TestPnmLoad(TestCase):
 
     def test_load_works_p4_in_mem(self):
         file = BytesIO(b"P4\n4 2\n\x55")
-        bitmap, palette = pnm.load(file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface)
+        bitmap, palette = pnm.load(
+            file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+        )
         self.assertEqual(4, bitmap.width)
         self.assertEqual(2, bitmap.height)
         bitmap.validate()
