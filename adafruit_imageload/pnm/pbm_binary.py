@@ -20,34 +20,55 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload`
+`adafruit_imageload.pnm.pbm_binary`
 ====================================================
 
-Load pixel values (indices or colors) into a bitmap and colors into a palette.
+Load pixel values (indices or colors) into a bitmap and for an ascii ppm,
+return None for pallet.
 
-* Author(s): Scott Shawcroft
+* Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(filename, *, bitmap=None, palette=None):
-    """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
-       bitmap is the desired type. It must take width, height and color_depth in the constructor. It
-       must also have a _load_row method to load a row's worth of pixel data.
-
-       palette is the desired pallete type. The constructor should take the number of colors and
-       support assignment to indices via [].
+def load(file, width, height, bitmap=None, palette=None):
     """
-    with open(filename, "rb") as file:
-        header = file.read(3)
-        file.seek(0)
-        if header.startswith(b"BM"):
-            from . import bmp
-            return bmp.load(file, bitmap=bitmap, palette=palette)
-        if header.startswith(b"P"):
-            from . import pnm
-            return pnm.load(file, header, bitmap=bitmap, palette=palette)
-        raise RuntimeError("Unsupported image format")
+    Load a P4 'PBM' binary image into the displayio.Bitmap
+    """
+    x = 0
+    y = 0
+    while True:
+        next_byte = file.read(1)
+        if not next_byte:
+            break  # out of bits
+        for bit in iterbits(next_byte):
+            bitmap[x, y] = bit
+            x += 1
+            if x > width - 1:
+                y += 1
+                x = 0
+            if y > height - 1:
+                break
+    return bitmap, palette
+
+
+def iterbits(b):
+    """
+    generator to iterate over the bits in a byte (character)
+    """
+    in_char = reverse(int.from_bytes(b, "little"))
+    for i in range(8):
+        yield (in_char >> i) & 1
+
+
+def reverse(b):
+    """
+    reverse bit order so the iterbits works
+    """
+    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4
+    b = (b & 0xCC) >> 2 | (b & 0x33) << 2
+    b = (b & 0xAA) >> 1 | (b & 0x55) << 1
+    return b

@@ -20,34 +20,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload`
+`adafruit_imageload.pnm.pbm_ascii`
 ====================================================
 
-Load pixel values (indices or colors) into a bitmap and colors into a palette.
+Load pixel values (indices or colors) into a bitmap and for an ascii ppm,
+return None for pallet.
 
-* Author(s): Scott Shawcroft
+* Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(filename, *, bitmap=None, palette=None):
-    """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
-       bitmap is the desired type. It must take width, height and color_depth in the constructor. It
-       must also have a _load_row method to load a row's worth of pixel data.
-
-       palette is the desired pallete type. The constructor should take the number of colors and
-       support assignment to indices via [].
+def load(file, width, height, bitmap=None, palette=None):
     """
-    with open(filename, "rb") as file:
-        header = file.read(3)
-        file.seek(0)
-        if header.startswith(b"BM"):
-            from . import bmp
-            return bmp.load(file, bitmap=bitmap, palette=palette)
-        if header.startswith(b"P"):
-            from . import pnm
-            return pnm.load(file, header, bitmap=bitmap, palette=palette)
-        raise RuntimeError("Unsupported image format")
+    Load a P1 'PBM' ascii image into the displayio.Bitmap
+    """
+    next_byte = True
+    for y in range(height):
+        x = 0
+        while next_byte:
+            next_byte = file.read(1)
+            if not next_byte.isdigit():
+                continue
+            bitmap[x, y] = 1 if next_byte == b"1" else 0
+            if x == width - 1:
+                break
+            x += 1
+    return bitmap, palette

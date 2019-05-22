@@ -20,34 +20,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_imageload`
+`adafruit_imageload.pnm.pgm`
 ====================================================
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
-* Author(s): Scott Shawcroft
+* Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
 
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(filename, *, bitmap=None, palette=None):
-    """Load pixel values (indices or colors) into a bitmap and colors into a palette.
-
-       bitmap is the desired type. It must take width, height and color_depth in the constructor. It
-       must also have a _load_row method to load a row's worth of pixel data.
-
-       palette is the desired pallete type. The constructor should take the number of colors and
-       support assignment to indices via [].
+def load(file, magic_number, header, *, bitmap=None, palette=None):
     """
-    with open(filename, "rb") as file:
-        header = file.read(3)
-        file.seek(0)
-        if header.startswith(b"BM"):
-            from . import bmp
-            return bmp.load(file, bitmap=bitmap, palette=palette)
-        if header.startswith(b"P"):
-            from . import pnm
-            return pnm.load(file, header, bitmap=bitmap, palette=palette)
-        raise RuntimeError("Unsupported image format")
+    Perform the load of Netpbm greyscale images (P2, P5)
+    """
+    if header[2] > 256:
+        raise NotImplementedError("16 bit files are not supported")
+    width = header[0]
+    height = header[1]
+
+    if magic_number == b"P2":  # To handle ascii PGM files.
+        from . import ascii as pgm_ascii
+
+        return pgm_ascii.load(file, width, height, bitmap=bitmap, palette=palette)
+
+    if magic_number == b"P5":  # To handle binary PGM files.
+        from . import binary
+
+        return binary.load(file, width, height, bitmap=bitmap, palette=palette)
+
+    raise NotImplementedError("Was not able to send image")

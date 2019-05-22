@@ -4,3 +4,7 @@ _build
 .env
 build*
 bundles
+.idea/
+venv/
+
+.vscode
