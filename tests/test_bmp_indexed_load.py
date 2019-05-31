@@ -29,14 +29,14 @@
 
 import os
 from unittest import TestCase
-from .. import load
+from adafruit_imageload import load
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
 class TestBmpIndexedLoad(TestCase):
     def test_order_bgra_to_rgba(self):
         test_file = os.path.join(
-            os.path.dirname(__file__), "..", "..", "examples", "images", "4bit.bmp"
+            os.path.dirname(__file__), "..", "examples", "images", "4bit.bmp"
         )
 
         bitmap, palette = load(
