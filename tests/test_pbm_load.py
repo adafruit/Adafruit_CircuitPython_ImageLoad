@@ -29,8 +29,8 @@
 import os
 from io import BytesIO
 from unittest import TestCase
-from .. import pnm
-from ..pnm.pbm_binary import iterbits, reverse
+from adafruit_imageload import pnm
+from adafruit_imageload.pnm.pbm_binary import iterbits, reverse
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
@@ -49,7 +49,6 @@ class TestPbmLoad(TestCase):
     def test_load_works_p1_ascii(self):
         test_file = os.path.join(
             os.path.dirname(__file__),
-            "..",
             "..",
             "examples",
             "images",
@@ -86,7 +85,6 @@ class TestPbmLoad(TestCase):
         test_file = os.path.join(
             os.path.dirname(__file__),
             "..",
-            "..",
             "examples",
             "images",
             "netpbm_p4_mono_binary.pbm",
@@ -107,7 +105,6 @@ class TestPbmLoad(TestCase):
     def test_load_works_p4_binary_high_res(self):
         test_file = os.path.join(
             os.path.dirname(__file__),
-            "..",
             "..",
             "examples",
             "images",

@@ -27,7 +27,7 @@ install:
   - pip install --force-reinstall pylint==1.9.2
 
 script:
-  - pytest adafruit_imageload
+  - python -m pytest
   - pylint adafruit_imageload/**
   - ([[ ! -d "examples" ]] || pylint --disable=missing-docstring,invalid-name,bad-whitespace examples/*.py)
   - circuitpython-build-bundles --filename_prefix adafruit-circuitpython-imageload --library_location .
