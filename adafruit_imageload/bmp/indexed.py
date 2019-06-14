@@ -62,6 +62,8 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
         bitmap = bitmap(width, height, colors)
         file.seek(data_start)
         line_size = width // (8 // color_depth)
+        if width % (8 // color_depth) != 0:
+            line_size += 1
         if line_size % 4 != 0:
             line_size += (4 - line_size % 4)
 
