@@ -50,4 +50,7 @@ def load(filename, *, bitmap=None, palette=None):
         if header.startswith(b"P"):
             from . import pnm
             return pnm.load(file, header, bitmap=bitmap, palette=palette)
+        if header.startswith(b"GIF"):
+            from . import gif
+            return gif.load(file, bitmap=bitmap, palette=palette)
         raise RuntimeError("Unsupported image format")
