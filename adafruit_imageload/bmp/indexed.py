@@ -61,7 +61,7 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
 
         #convert unsigned int to signed int when height is negative
         if height > 0x7fffffff:
-    	    height = height - 4294967296
+            height = height - 4294967296
         theight = height
         if theight < 0:
             theight = 0 - theight
