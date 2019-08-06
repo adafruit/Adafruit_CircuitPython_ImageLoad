@@ -59,7 +59,13 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
         while colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
-        bitmap = bitmap(width, height, colors)
+        #convert unsigned int to signed int when height is negative
+        if height > 0x7fffffff:
+            height = height - 4294967296
+        theight = height
+        if theight < 0:
+            theight = 0 - theight
+        bitmap = bitmap(width, theight, colors)
         file.seek(data_start)
         line_size = width // (8 // color_depth)
         if width % (8 // color_depth) != 0:
@@ -69,8 +75,15 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
 
         chunk = bytearray(line_size)
         mask = (1 << minimum_color_depth) - 1
-
-        for y in range(height - 1, -1, -1):
+        if height > 0:
+            range1 = height - 1
+            range2 = -1
+            range3 = -1
+        else:
+            range1 = 0
+            range2 = abs(height)
+            range3 = 1
+        for y in range(range1, range2, range3):
             file.readinto(chunk)
             pixels_per_byte = 8 // color_depth
             offset = y * width
