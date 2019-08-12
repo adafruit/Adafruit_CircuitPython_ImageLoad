@@ -62,10 +62,7 @@ def load(file, width, height, data_start, colors, color_depth, *, bitmap=None, p
         #convert unsigned int to signed int when height is negative
         if height > 0x7fffffff:
             height = height - 4294967296
-        theight = height
-        if theight < 0:
-            theight = 0 - theight
-        bitmap = bitmap(width, theight, colors)
+        bitmap = bitmap(width, abs(height), colors)
         file.seek(data_start)
         line_size = width // (8 // color_depth)
         if width % (8 // color_depth) != 0:
