@@ -51,14 +51,19 @@ def load(file, *, bitmap=None, palette=None):
     height = int.from_bytes(file.read(4), 'little')
     file.seek(0x1c) # Number of bits per pixel
     color_depth = int.from_bytes(file.read(2), 'little')
+    file.seek(0x1e) # Compression type
+    compression = int.from_bytes(file.read(2), 'little')
     file.seek(0x2e) # Number of colors in the color palette
     colors = int.from_bytes(file.read(4), 'little')
 
     if colors == 0 and color_depth >= 16:
         raise NotImplementedError("True color BMP unsupported")
 
+    if compression > 2:
+        raise NotImplementedError("bitmask compression unsupported")
+
     if colors == 0:
         colors = 2 ** color_depth
     from . import indexed
-    return indexed.load(file, width, height, data_start, colors, color_depth, bitmap=bitmap,
-                        palette=palette)
+    return indexed.load(file, width, height, data_start, colors, color_depth,
+                        compression, bitmap=bitmap, palette=palette)
