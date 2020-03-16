@@ -28,6 +28,7 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
+# pylint: disable=import-outside-toplevel
 
 
 def load(file, magic_number, header, *, bitmap=None, palette=None):

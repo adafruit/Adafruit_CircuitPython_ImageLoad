@@ -32,8 +32,19 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(file, width, height, data_start, colors, color_depth, compression, *,
-         bitmap=None, palette=None):
+
+def load(
+    file,
+    width,
+    height,
+    data_start,
+    colors,
+    color_depth,
+    compression,
+    *,
+    bitmap=None,
+    palette=None
+):
     """Loads indexed bitmap data into bitmap and palette objects.
 
        :param file file: The open bmp file
@@ -51,18 +62,17 @@ def load(file, width, height, data_start, colors, color_depth, compression, *,
         for value in range(colors):
             c_bytes = file.read(4)
             # Need to swap red & blue bytes (bytes 0 and 2)
-            palette[value] = bytes(b''.join([c_bytes[2:3],
-                                             c_bytes[1:2],
-                                             c_bytes[0:1],
-                                             c_bytes[3:1]]))
+            palette[value] = bytes(
+                b"".join([c_bytes[2:3], c_bytes[1:2], c_bytes[0:1], c_bytes[3:1]])
+            )
 
     if bitmap:
         minimum_color_depth = 1
         while colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
-        #convert unsigned int to signed int when height is negative
-        if height > 0x7fffffff:
+        # convert unsigned int to signed int when height is negative
+        if height > 0x7FFFFFFF:
             height = height - 4294967296
         bitmap = bitmap(width, abs(height), colors)
         file.seek(data_start)
@@ -70,7 +80,7 @@ def load(file, width, height, data_start, colors, color_depth, compression, *,
         if width % (8 // color_depth) != 0:
             line_size += 1
         if line_size % 4 != 0:
-            line_size += (4 - line_size % 4)
+            line_size += 4 - line_size % 4
 
         mask = (1 << minimum_color_depth) - 1
         if height > 0:
@@ -91,7 +101,9 @@ def load(file, width, height, data_start, colors, color_depth, compression, *,
 
                 for x in range(width):
                     i = x // pixels_per_byte
-                    pixel = (chunk[i] >> (8 - color_depth*(x % pixels_per_byte + 1))) & mask
+                    pixel = (
+                        chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))
+                    ) & mask
                     bitmap[offset + x] = pixel
         elif compression in (1, 2):
             decode_rle(
@@ -99,9 +111,11 @@ def load(file, width, height, data_start, colors, color_depth, compression, *,
                 file=file,
                 compression=compression,
                 y_range=(range1, range2, range3),
-                width=width)
+                width=width,
+            )
 
     return bitmap, palette
+
 
 def decode_rle(bitmap, file, compression, y_range, width):
     """Helper to decode RLE images"""
@@ -218,16 +232,12 @@ def decode_rle(bitmap, file, compression, y_range, width):
                 # 0xab 3 times, the output pixel values would be: 0x0a
                 # 0x0b 0x0a (notice how it ends at 0x0a) rather than
                 # 0x0a 0x0b 0x0a 0x0b 0x0a 0x0b
-                run_values = [
-                    run_buf[1] >> 4,
-                    run_buf[1] & 0x0F
-                ]
+                run_values = [run_buf[1] >> 4, run_buf[1] & 0x0F]
                 for i in range(0, min(run_length_px, width_remaining)):
                     bitmap[offset + i] = run_values[i % 2]
             else:
                 run_value = run_buf[1]
                 for i in range(0, min(run_length_px, width_remaining)):
                     bitmap[offset + i] = run_value
-
 
             x = x + run_length_px
