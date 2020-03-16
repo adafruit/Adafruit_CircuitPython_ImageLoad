@@ -28,9 +28,11 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Scott Shawcroft
 
 """
+# pylint: disable=import-outside-toplevel
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
+
 
 def load(filename, *, bitmap=None, palette=None):
     """Load pixel values (indices or colors) into a bitmap and colors into a palette.
@@ -46,11 +48,14 @@ def load(filename, *, bitmap=None, palette=None):
         file.seek(0)
         if header.startswith(b"BM"):
             from . import bmp
+
             return bmp.load(file, bitmap=bitmap, palette=palette)
         if header.startswith(b"P"):
             from . import pnm
+
             return pnm.load(file, header, bitmap=bitmap, palette=palette)
         if header.startswith(b"GIF"):
             from . import gif
+
             return gif.load(file, bitmap=bitmap, palette=palette)
         raise RuntimeError("Unsupported image format")

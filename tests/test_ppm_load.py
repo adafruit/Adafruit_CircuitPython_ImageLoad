@@ -51,7 +51,7 @@ class TestPpmLoad(TestCase):
         self.assertTrue(isinstance(palette, Palette_C_Interface))
         self.assertEqual(6, palette.num_colors)
         palette.validate()
-        #self.fail(str(palette))
+        # self.fail(str(palette))
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(6, bitmap.colors)
         self.assertEqual(16, bitmap.width)
@@ -79,12 +79,12 @@ class TestPpmLoad(TestCase):
         bitmap.validate()
 
     def test_load_three_colors_tail(self):
-        buffer = BytesIO(b'211 222 233')
+        buffer = BytesIO(b"211 222 233")
         for i in read_three_colors(buffer):
-            self.assertEqual(b'\xd3\xde\xe9', i)
+            self.assertEqual(b"\xd3\xde\xe9", i)
 
     def test_load_three_colors_middle(self):
-        buffer = BytesIO(b'0 128 255 45 55 25')
+        buffer = BytesIO(b"0 128 255 45 55 25")
         for i in iter(read_three_colors(buffer)):
-            self.assertEqual(b'\x00\x80\xff', i)
+            self.assertEqual(b"\x00\x80\xff", i)
             break

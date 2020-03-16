@@ -123,12 +123,12 @@ class TestPbmLoad(TestCase):
         palette.validate()
 
     def test_iterbits(self):
-        k = b'k'
+        k = b"k"
         bits = []
         for byte in iterbits(k):
             bits.append(byte)
-        #self.assertEqual([0,1,1,0,1,0,1,1], bits[::-1])
-        self.assertEqual([0,1,1,0,1,0,1,1], bits)
+        # self.assertEqual([0,1,1,0,1,0,1,1], bits[::-1])
+        self.assertEqual([0, 1, 1, 0, 1, 0, 1, 1], bits)
 
     def test_reverse(self):
         # 00110100 to 00101100
