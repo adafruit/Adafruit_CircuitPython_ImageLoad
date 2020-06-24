@@ -32,6 +32,8 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+import sys
+
 
 def load(
     file,
@@ -72,8 +74,14 @@ def load(
             minimum_color_depth *= 2
 
         # convert unsigned int to signed int when height is negative
-        if height > 0x7FFFFFFF:
+        if sys.maxsize > 1073741823:
+            # pylint: disable=import-outside-toplevel
+            from .negative_height_check import negative_height_check
+
             height = height - 4294967296
+
+            # convert unsigned int to signed int when height is negative
+            height = negative_height_check(height)
         bitmap = bitmap(width, abs(height), colors)
         file.seek(data_start)
         line_size = width // (8 // color_depth)
