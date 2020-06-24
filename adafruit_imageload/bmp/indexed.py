@@ -73,12 +73,9 @@ def load(
         while colors > 2 ** minimum_color_depth:
             minimum_color_depth *= 2
 
-        # convert unsigned int to signed int when height is negative
         if sys.maxsize > 1073741823:
             # pylint: disable=import-outside-toplevel
             from .negative_height_check import negative_height_check
-
-            height = height - 4294967296
 
             # convert unsigned int to signed int when height is negative
             height = negative_height_check(height)
