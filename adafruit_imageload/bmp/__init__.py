@@ -50,7 +50,12 @@ def load(file, *, bitmap=None, palette=None):
     # print(bmp_header_length)
     file.seek(0x12)  # Width of the bitmap in pixels
     width = int.from_bytes(file.read(4), "little")
-    height = int.from_bytes(file.read(4), "little")
+    try:
+        height = int.from_bytes(file.read(4), "little")
+    except OverflowError:
+        raise NotImplementedError(
+            "Negative height BMP files are not supported on builds without longint"
+        )
     file.seek(0x1C)  # Number of bits per pixel
     color_depth = int.from_bytes(file.read(2), "little")
     file.seek(0x1E)  # Compression type
