@@ -6,3 +6,4 @@ bundles
 .idea/
 venv/
 .vscode
+.DS_STORE
