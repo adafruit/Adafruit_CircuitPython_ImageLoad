@@ -17,6 +17,9 @@ This library decodes an image file into new bitmap and palette objects of the pr
 designed to load code needed during decoding as needed. This is meant to minimize the memory
 overhead of the decoding code.
 
+Only certain types of bitmaps work with this library, and they often have to be exported in specific ways. To find out what types are supported and how to make them, see `this learn guide page.
+<https://learn.adafruit.com/creating-your-first-tilemap-game-with-circuitpython/indexed-bmp-graphics>`_
+
 Usage Example
 =============
 
