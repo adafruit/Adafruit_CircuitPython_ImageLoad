@@ -28,13 +28,14 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Scott Shawcroft
 
 """
+import displayio
 # pylint: disable=import-outside-toplevel
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(filename, *, bitmap=None, palette=None):
+def load(filename, *, bitmap=displayio.Bitmap, palette=displayio.Palette):
     """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
        bitmap is the desired type. It must take width, height and color_depth in the constructor. It
