@@ -29,6 +29,7 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
 """
 import displayio
+
 # pylint: disable=import-outside-toplevel
 
 __version__ = "0.0.0-auto.0"
