@@ -44,12 +44,17 @@ def load(filename, *, bitmap=None, palette=None):
        support assignment to indices via [].
     """
     if not bitmap or not palette:
-        import displayio
+        try:
+            # use displayio if available
+            import displayio
 
-        if not bitmap:
-            bitmap = displayio.Bitmap
-        if not palette:
-            palette = displayio.Palette
+            if not bitmap:
+                bitmap = displayio.Bitmap
+            if not palette:
+                palette = displayio.Palette
+        except ModuleNotFoundError:
+            # meh, we tried
+            pass
 
     with open(filename, "rb") as file:
         header = file.read(3)

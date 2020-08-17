@@ -2,9 +2,8 @@ import board
 import displayio
 import adafruit_imageload
 
-image, palette = adafruit_imageload.load(
-    "images/4bit.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette
-)
+image, palette = adafruit_imageload.load("images/4bit.bmp")
+
 tile_grid = displayio.TileGrid(image, pixel_shader=palette)
 
 group = displayio.Group()
