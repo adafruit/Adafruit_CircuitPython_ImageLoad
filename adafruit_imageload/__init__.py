@@ -43,6 +43,19 @@ def load(filename, *, bitmap=None, palette=None):
        palette is the desired pallete type. The constructor should take the number of colors and
        support assignment to indices via [].
     """
+    if not bitmap or not palette:
+        try:
+            # use displayio if available
+            import displayio
+
+            if not bitmap:
+                bitmap = displayio.Bitmap
+            if not palette:
+                palette = displayio.Palette
+        except ModuleNotFoundError:
+            # meh, we tried
+            pass
+
     with open(filename, "rb") as file:
         header = file.read(3)
         file.seek(0)
