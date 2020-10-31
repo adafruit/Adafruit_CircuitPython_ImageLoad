@@ -46,5 +46,5 @@ setup(
     keywords="adafruit blinka circuitpython micropython bitmap fonts text display tft lcd displayio imageload image",
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=["adafruit_imageload"],
+    packages=["adafruit_imageload", "adafruit_imageload.bmp", "adafruit_imageload.pnm"],
 )
