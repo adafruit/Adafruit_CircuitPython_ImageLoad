@@ -2,10 +2,10 @@
 Basic imageload example script
 adapted for use on MagTag.
 """
+import time
 import board
 import displayio
 import adafruit_imageload
-import time
 
 # use built in display (PyPortal, PyGamer, PyBadge, CLUE, etc.)
 # see guide for setting up external displays (TFT / OLED breakouts, RGB matrices, etc.)
