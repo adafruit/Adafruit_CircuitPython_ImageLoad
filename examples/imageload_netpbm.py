@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This is a hardware testing script for PBM
 Tested with Feather M4 Express and 2.4" Featherwing

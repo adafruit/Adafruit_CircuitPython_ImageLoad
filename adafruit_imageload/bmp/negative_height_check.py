@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
+#
+# SPDX-License-Identifier: MIT
+
 """
 Check for negative height on the BMP.
 Seperated into it's own file to support builds
