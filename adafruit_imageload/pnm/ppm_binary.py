@@ -1,4 +1,7 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
+# SPDX-FileCopyrightText: Matt Land
+# SPDX-FileCopyrightText: Brooke Storm
+# SPDX-FileCopyrightText: Sam McGahan
 #
 # SPDX-License-Identifier: MIT
 
