@@ -166,7 +166,6 @@ def decode_rle(bitmap, file, compression, y_range, width):
         # file is 15px wide but has data for 16px.
         width_remaining = width - x
 
-        print("doing this too")
         file.readinto(run_buf)
 
         if run_buf[0] == 0:
