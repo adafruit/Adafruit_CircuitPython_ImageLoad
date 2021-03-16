@@ -33,13 +33,16 @@ from .displayio_shared_bindings import Palette_C_Interface
 
 
 class TestPalette_C_Interface(TestCase):
-    def test_init_mono(self):
+    @staticmethod
+    def test_init_mono():
         Palette_C_Interface(1)
 
-    def test_init_color(self):
+    @staticmethod
+    def test_init_color():
         Palette_C_Interface(256)
 
-    def test_set_int(self):
+    @staticmethod
+    def test_set_int():
         palette = Palette_C_Interface(1)
         palette[0] = 0xFFFFFF
 
@@ -48,7 +51,8 @@ class TestPalette_C_Interface(TestCase):
         palette[0] = 0xFFFFFF
         self.assertEqual(0xFFFFFF, palette[0])
 
-    def test_set_byte(self):
+    @staticmethod
+    def test_set_byte():
         palette = Palette_C_Interface(1)
         palette[0] = b"\xFF\xFF\xFF"
 
@@ -57,7 +61,8 @@ class TestPalette_C_Interface(TestCase):
         palette[0] = b"\xFF\xFF\xFF"
         self.assertEqual(b"\xFF\xFF\xFF", palette[0])
 
-    def test_set_bytearray(self):
+    @staticmethod
+    def test_set_bytearray():
         palette = Palette_C_Interface(1)
         palette[0] = bytearray(b"\xFF\xFF\xFF")
 
@@ -66,8 +71,8 @@ class TestPalette_C_Interface(TestCase):
         try:
             palette[1] = 0xFFFFFF
             self.fail("exception should have already thrown")
-        except ValueError as e:
-            if "greater than allowed" not in str(e):
+        except ValueError as err:
+            if "greater than allowed" not in str(err):
                 raise
 
     def test_prevents_set_non_allowed(self):
@@ -75,11 +80,12 @@ class TestPalette_C_Interface(TestCase):
         try:
             palette[0] = "\xFF\xFF\xFF"  # attempt with a string, which is not allowed
             self.fail("exception should have thrown")
-        except ValueError as e:
-            if "should be" not in str(e):
+        except ValueError as err:
+            if "should be" not in str(err):
                 raise
 
-    def test_validate_success(self):
+    @staticmethod
+    def test_validate_success():
         palette = Palette_C_Interface(1)
         palette[0] = b"\xFF\xFF\xFF"
         palette.validate()
@@ -90,11 +96,12 @@ class TestPalette_C_Interface(TestCase):
         try:
             palette.validate()
             self.fail("exception should have thrown")
-        except IndexError as e:
-            if "palette was initialized" not in str(e):
+        except IndexError as err:
+            if "palette was initialized" not in str(err):
                 raise
 
-    def test_str(self):
+    @staticmethod
+    def test_str():
         palette = Palette_C_Interface(1)
         palette[0] = b"\xFF\xFF\xFF"
         print(str(palette))
