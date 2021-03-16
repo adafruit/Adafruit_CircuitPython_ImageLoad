@@ -24,8 +24,8 @@
 ====================================================
 
 The classes in this file are designed to emulate Circuitpython's displayio classes
-for Bitmap and Palette. These mimic classes should have the same methods and interface as the real interface,
-but with extra validation checks, warnings, and messages to facilitate debugging.
+for Bitmap and Palette. These mimic classes should have the same methods and interface as the real
+interface, but with extra validation checks, warnings, and messages to facilitate debugging.
 
 Code that can be run successfully against these classes will have a good chance of
  working correctly on hardware running Circuitpython, but without needing to upload code to a board
@@ -37,7 +37,7 @@ Code that can be run successfully against these classes will have a good chance 
 from typing import Union
 
 
-class Bitmap_C_Interface(object):
+class Bitmap_C_Interface:
     """
     A class to simulate the displayio.Bitmap class for testing, based on
     https://circuitpython.readthedocs.io/en/latest/shared-bindings/displayio/Bitmap.html
@@ -88,8 +88,10 @@ class Bitmap_C_Interface(object):
             raise RuntimeError(f"get position out of range {item}")
         try:
             return self.data[item]
-        except KeyError:
-            raise RuntimeError("no data at {} [{}]".format(self._decode(item), item))
+        except KeyError as err:
+            raise RuntimeError(
+                "no data at {} [{}]".format(self._decode(item), item)
+            ) from err
 
     def validate(self, detect_empty_image=True) -> None:
         """
@@ -103,8 +105,8 @@ class Bitmap_C_Interface(object):
             for x in range(self.width):
                 try:
                     seen_colors.add(self[x, y])
-                except KeyError:
-                    raise ValueError(f"missing data at {x},{y}")
+                except KeyError as err:
+                    raise ValueError(f"missing data at {x},{y}") from err
         if detect_empty_image and len(seen_colors) < 2:
             raise ValueError(
                 "image detected as only one color. set detect_empty_image=False to ignore"
@@ -131,7 +133,7 @@ class Bitmap_C_Interface(object):
         return out
 
 
-class Palette_C_Interface(object):
+class Palette_C_Interface:
     """
     A class to simulates the displayio.Palette class for testing, based on
     https://circuitpython.readthedocs.io/en/latest/shared-bindings/displayio/Palette.html
@@ -191,8 +193,10 @@ class Palette_C_Interface(object):
         for i in range(self.num_colors):
             try:
                 self.colors
-            except IndexError:
-                raise ValueError("missing color `{}` in palette color list".format(i))
+            except IndexError as err:
+                raise ValueError(
+                    "missing color `{}` in palette color list".format(i)
+                ) from err
 
     def __str__(self):
         """

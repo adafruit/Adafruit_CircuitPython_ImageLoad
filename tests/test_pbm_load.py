@@ -35,14 +35,14 @@ from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 
 class TestPbmLoad(TestCase):
-    def test_load_fails_with_no_header_data(self):
+    def test_load_fails_with_no_header_data(self):  # pylint: disable=invalid-name
         file = BytesIO(b"some initial binary data: \x00\x01")
         try:
             pnm.load(
                 file, b"P1", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
             )
             self.fail("should have failed")
-        except Exception as caught_exception:
+        except Exception as caught_exception:  # pylint: disable=broad-except
             if "Unsupported image format" not in str(caught_exception):
                 raise
 
@@ -102,7 +102,7 @@ class TestPbmLoad(TestCase):
         self.assertEqual(15, bitmap.height)
         bitmap.validate()
 
-    def test_load_works_p4_binary_high_res(self):
+    def test_load_works_p4_binary_high_res(self):  # pylint: disable=invalid-name
         test_file = os.path.join(
             os.path.dirname(__file__),
             "..",

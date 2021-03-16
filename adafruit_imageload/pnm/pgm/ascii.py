@@ -21,7 +21,7 @@ def load(file, width, height, bitmap=None, palette=None):
     Load a PGM ascii file (P2)
     """
     data_start = file.tell()  # keep this so we can rewind
-    palette_colors = set()
+    _palette_colors = set()
     pixel = bytearray()
     # build a set of all colors present in the file, so palette and bitmap can be constructed
     while True:
@@ -30,14 +30,14 @@ def load(file, width, height, bitmap=None, palette=None):
             break
         if not byte.isdigit():
             int_pixel = int("".join(["%c" % char for char in pixel]))
-            palette_colors.add(int_pixel)
+            _palette_colors.add(int_pixel)
             pixel = bytearray()
         pixel += byte
     if palette:
-        palette = build_palette(palette, palette_colors)
+        palette = build_palette(palette, _palette_colors)
     if bitmap:
-        bitmap = bitmap(width, height, len(palette_colors))
-        palette_colors = list(palette_colors)
+        bitmap = bitmap(width, height, len(_palette_colors))
+        _palette_colors = list(_palette_colors)
         file.seek(data_start)
         for y in range(height):
             for x in range(width):
@@ -48,11 +48,11 @@ def load(file, width, height, bitmap=None, palette=None):
                         break
                     pixel += byte
                 int_pixel = int("".join(["%c" % char for char in pixel]))
-                bitmap[x, y] = palette_colors.index(int_pixel)
+                bitmap[x, y] = _palette_colors.index(int_pixel)
     return bitmap, palette
 
 
-def build_palette(palette_class, palette_colors):
+def build_palette(palette_class, palette_colors):  # pylint: disable=duplicate-code
     """
     construct the Palette, and populate it with the set of palette_colors
     """

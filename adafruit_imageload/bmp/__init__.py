@@ -32,9 +32,9 @@ def load(file, *, bitmap=None, palette=None):
     # bmp_header_length = int.from_bytes(file.read(4), 'little')
     # print(bmp_header_length)
     file.seek(0x12)  # Width of the bitmap in pixels
-    width = int.from_bytes(file.read(4), "little")
+    _width = int.from_bytes(file.read(4), "little")
     try:
-        height = int.from_bytes(file.read(4), "little")
+        _height = int.from_bytes(file.read(4), "little")
     except OverflowError as error:
         raise NotImplementedError(
             "Negative height BMP files are not supported on builds without longint"
@@ -58,8 +58,8 @@ def load(file, *, bitmap=None, palette=None):
 
     return indexed.load(
         file,
-        width,
-        height,
+        _width,
+        _height,
         data_start,
         colors,
         color_depth,
