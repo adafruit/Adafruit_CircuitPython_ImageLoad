@@ -17,6 +17,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 import sys
 
+try:
+    from bitmaptools import readinto as _bitmap_readinto
+except ImportError:
+    _bitmap_readinto = None  # pylint: disable=invalid-name
+
 
 def load(
     file,
@@ -57,7 +62,7 @@ def load(
             minimum_color_depth *= 2
 
         if sys.maxsize > 1073741823:
-            # pylint: disable=import-outside-toplevel
+            # pylint: disable=import-outside-toplevel, relative-beyond-top-level
             from .negative_height_check import negative_height_check
 
             # convert unsigned int to signed int when height is negative
@@ -82,17 +87,28 @@ def load(
 
         if compression == 0:
             chunk = bytearray(line_size)
-            for y in range(range1, range2, range3):
-                file.readinto(chunk)
-                pixels_per_byte = 8 // color_depth
-                offset = y * width
 
-                for x in range(width):
-                    i = x // pixels_per_byte
-                    pixel = (
-                        chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))
-                    ) & mask
-                    bitmap[offset + x] = pixel
+            if _bitmap_readinto:
+                _bitmap_readinto(
+                    bitmap,
+                    file,
+                    bits_per_pixel=color_depth,
+                    element_size=4,
+                    reverse_pixels_in_element=False,
+                    reverse_rows=True,
+                )
+            else:  # use the standard file.readinto
+                for y in range(range1, range2, range3):
+                    file.readinto(chunk)
+                    pixels_per_byte = 8 // color_depth
+                    offset = y * width
+
+                    for x in range(width):
+                        i = x // pixels_per_byte
+                        pixel = (
+                            chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))
+                        ) & mask
+                        bitmap[offset + x] = pixel
         elif compression in (1, 2):
             decode_rle(
                 bitmap=bitmap,
@@ -150,6 +166,7 @@ def decode_rle(bitmap, file, compression, y_range, width):
         # file is 15px wide but has data for 16px.
         width_remaining = width - x
 
+        print("doing this too")
         file.readinto(run_buf)
 
         if run_buf[0] == 0:
