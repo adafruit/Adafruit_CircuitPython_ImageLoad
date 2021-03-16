@@ -44,7 +44,7 @@ def build_palette(palette_class, palette_colors):
     """
     construct the Palette, and populate it with the set of palette_colors
     """
-    palette = palette_class(len(palette_colors))
+    _palette = palette_class(len(palette_colors))
     for counter, color in enumerate(palette_colors):
-        palette[counter] = bytes([color, color, color])
-    return palette
+        _palette[counter] = bytes([color, color, color])
+    return _palette
