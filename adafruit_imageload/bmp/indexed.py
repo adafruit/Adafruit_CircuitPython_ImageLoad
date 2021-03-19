@@ -86,7 +86,6 @@ def load(
             range3 = 1
 
         if compression == 0:
-            chunk = bytearray(line_size)
 
             if _bitmap_readinto:
                 _bitmap_readinto(
@@ -98,6 +97,7 @@ def load(
                     reverse_rows=True,
                 )
             else:  # use the standard file.readinto
+                chunk = bytearray(line_size)
                 for y in range(range1, range2, range3):
                     file.readinto(chunk)
                     pixels_per_byte = 8 // color_depth
