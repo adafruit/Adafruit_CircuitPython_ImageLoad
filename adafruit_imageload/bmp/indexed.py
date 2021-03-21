@@ -93,7 +93,7 @@ def load(
                     file,
                     bits_per_pixel=color_depth,
                     element_size=4,
-                    reverse_pixels_in_element=False,
+                    reverse_pixels_in_element=True,
                     reverse_rows=True,
                 )
             else:  # use the standard file.readinto
