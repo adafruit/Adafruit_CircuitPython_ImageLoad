@@ -99,9 +99,9 @@ def load(
                     )
                 except TypeError:
                     # catch unexpected argument, try python read code.
-                    # this can be removed after a release is made that
-                    # includes bitmapttools.readinto() with all arguments
-                    # used above.
+                    # This issue affects only CircuitPython 6.2.0-beta.4.
+                    # The try/except block here should be removed when
+                    # a newer release is made.
                     chunk = bytearray(line_size)
                     for y in range(range1, range2, range3):
                         file.readinto(chunk)
