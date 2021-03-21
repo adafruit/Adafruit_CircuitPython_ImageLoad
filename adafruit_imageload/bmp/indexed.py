@@ -88,14 +88,34 @@ def load(
         if compression == 0:
 
             if _bitmap_readinto:
-                _bitmap_readinto(
-                    bitmap,
-                    file,
-                    bits_per_pixel=color_depth,
-                    element_size=4,
-                    reverse_pixels_in_element=False,
-                    reverse_rows=True,
-                )
+                try:
+                    _bitmap_readinto(
+                        bitmap,
+                        file,
+                        bits_per_pixel=color_depth,
+                        element_size=4,
+                        reverse_pixels_in_element=False,
+                        reverse_rows=True,
+                    )
+                except TypeError:
+                    # catch unexpected argument, try python read code.
+                    # this can be removed after a release is made that
+                    # includes bitmapttools.readinto() with all arguments
+                    # used above.
+                    chunk = bytearray(line_size)
+                    for y in range(range1, range2, range3):
+                        file.readinto(chunk)
+                        pixels_per_byte = 8 // color_depth
+                        offset = y * width
+
+                        for x in range(width):
+                            i = x // pixels_per_byte
+                            pixel = (
+                                chunk[i]
+                                >> (8 - color_depth * (x % pixels_per_byte + 1))
+                            ) & mask
+                            bitmap[offset + x] = pixel
+
             else:  # use the standard file.readinto
                 chunk = bytearray(line_size)
                 for y in range(range1, range2, range3):
