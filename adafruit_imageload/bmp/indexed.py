@@ -94,7 +94,7 @@ def load(
                         file,
                         bits_per_pixel=color_depth,
                         element_size=4,
-                        reverse_pixels_in_element=False,
+                        reverse_pixels_in_element=True,
                         reverse_rows=True,
                     )
                 except TypeError:
@@ -115,7 +115,6 @@ def load(
                                 >> (8 - color_depth * (x % pixels_per_byte + 1))
                             ) & mask
                             bitmap[offset + x] = pixel
-
             else:  # use the standard file.readinto
                 chunk = bytearray(line_size)
                 for y in range(range1, range2, range3):
