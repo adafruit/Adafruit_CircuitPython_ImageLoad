@@ -68,7 +68,7 @@ class Bitmap_C_Interface:
         """
         if isinstance(key, tuple):
             # order is X, Y from the docs
-            # https://github.com/adafruit/circuitpython/blob/master/shared-bindings/displayio/Bitmap.c
+            # https://github.com/adafruit/circuitpython/blob/main/shared-bindings/displayio/Bitmap.c
             self.__setitem__(self._abs_pos(key[0], key[1]), value)
             return
         if not isinstance(value, (int)):
