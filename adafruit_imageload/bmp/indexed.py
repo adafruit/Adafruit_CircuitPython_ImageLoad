@@ -88,33 +88,15 @@ def load(
         if compression == 0:
 
             if _bitmap_readinto:
-                try:
-                    _bitmap_readinto(
-                        bitmap,
-                        file,
-                        bits_per_pixel=color_depth,
-                        element_size=4,
-                        reverse_pixels_in_element=True,
-                        reverse_rows=True,
-                    )
-                except TypeError:
-                    # catch unexpected argument, try python read code.
-                    # This issue affects only CircuitPython 6.2.0-beta.4.
-                    # The try/except block here should be removed when
-                    # a newer release is made.
-                    chunk = bytearray(line_size)
-                    for y in range(range1, range2, range3):
-                        file.readinto(chunk)
-                        pixels_per_byte = 8 // color_depth
-                        offset = y * width
+                _bitmap_readinto(
+                    bitmap,
+                    file,
+                    bits_per_pixel=color_depth,
+                    element_size=4,
+                    reverse_pixels_in_element=True,
+                    reverse_rows=True,
+                )
 
-                        for x in range(width):
-                            i = x // pixels_per_byte
-                            pixel = (
-                                chunk[i]
-                                >> (8 - color_depth * (x % pixels_per_byte + 1))
-                            ) & mask
-                            bitmap[offset + x] = pixel
             else:  # use the standard file.readinto
                 chunk = bytearray(line_size)
                 for y in range(range1, range2, range3):
