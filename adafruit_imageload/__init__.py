@@ -39,7 +39,11 @@ def load(filename, *, bitmap=None, palette=None):
             # meh, we tried
             pass
 
-    with open(filename, "rb") as file:
+    file_or_filename = filename
+    if isinstance(file_or_filename, str):
+        file_or_filename = open(filename, "rb")
+
+    with file_or_filename as file:
         header = file.read(3)
         file.seek(0)
         if header.startswith(b"BM"):
