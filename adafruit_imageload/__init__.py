@@ -17,7 +17,7 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(filename, *, bitmap=None, palette=None):
+def load(file_or_filename, *, bitmap=None, palette=None):
     """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
     bitmap is the desired type. It must take width, height and color_depth in the constructor. It
@@ -39,11 +39,12 @@ def load(filename, *, bitmap=None, palette=None):
             # meh, we tried
             pass
 
-    file_or_filename = filename
     if isinstance(file_or_filename, str):
-        file_or_filename = open(filename, "rb")
+        open_file = open(file_or_filename, "rb")
+    else:
+        open_file = file_or_filename
 
-    with file_or_filename as file:
+    with open_file as file:
         header = file.read(3)
         file.seek(0)
         if header.startswith(b"BM"):
