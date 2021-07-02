@@ -27,7 +27,7 @@ display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs)
 display = adafruit_ili9341.ILI9341(display_bus, width=320, height=240)
 
 # Make the display context
-splash = displayio.Group(max_size=10)
+splash = displayio.Group()
 display.show(splash)
 # image = "images/netpbm_p1_mono_ascii.pbm"
 # image = "images/netpbm_p2_ascii.pgm"

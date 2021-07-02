@@ -11,3 +11,8 @@ bundles
 venv/
 .vscode
 .DS_STORE
+develop-eggs/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
