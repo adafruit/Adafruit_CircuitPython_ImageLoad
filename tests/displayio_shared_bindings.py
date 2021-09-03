@@ -211,6 +211,6 @@ class Palette_C_Interface:
         print(str(palette))
         """
         out = "\nPalette:\n"
-        for y in range(len(self.colors)):
-            out += f" [{y}] {self.colors[y]}\n"
+        for i, color in enumerate(self.colors):
+            out += f" [{i}] {color}\n"
         return out
