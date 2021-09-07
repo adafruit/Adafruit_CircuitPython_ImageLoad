@@ -137,17 +137,20 @@ def lzw_decode(data, code_size):
     """Decode LZW-compressed data."""
     dictionary = LZWDict(code_size)
     bit = 0
-    byte = next(data)  # pylint: disable=stop-iteration-return
     try:
-        while True:
-            code = 0
-            for i in range(dictionary.code_len):
-                code |= ((byte >> bit) & 0x01) << i
-                bit += 1
-                if bit >= 8:
-                    bit = 0
-                    byte = next(data)  # pylint: disable=stop-iteration-return
-            yield dictionary.decode(code)
-    except EndOfData:
-        while True:
-            next(data)  # pylint: disable=stop-iteration-return
+        byte = next(data)  # pylint: disable=stop-iteration-return
+        try:
+            while True:
+                code = 0
+                for i in range(dictionary.code_len):
+                    code |= ((byte >> bit) & 0x01) << i
+                    bit += 1
+                    if bit >= 8:
+                        bit = 0
+                        byte = next(data)  # pylint: disable=stop-iteration-return
+                yield dictionary.decode(code)
+        except EndOfData:
+            while True:
+                next(data)  # pylint: disable=stop-iteration-return
+    except StopIteration:
+        pass

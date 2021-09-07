@@ -40,7 +40,9 @@ class TestBmpIndexedLoad(TestCase):
         )
 
         bitmap, palette = load(
-            filename=test_file, bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            file_or_filename=test_file,
+            bitmap=Bitmap_C_Interface,
+            palette=Palette_C_Interface,
         )
         self.assertTrue(isinstance(bitmap, Bitmap_C_Interface), bitmap)
         self.assertEqual(16, bitmap.colors)

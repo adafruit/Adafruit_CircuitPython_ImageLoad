@@ -41,7 +41,7 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_abs(self):
         b = Bitmap_C_Interface(5, 2, 1)
-        self.assertEqual(9, b._abs_pos(4, 1))
+        self.assertEqual(9, b._abs_pos(4, 1))  # pylint: disable=protected-access
 
     def test_set_tuple(self):
         b = Bitmap_C_Interface(2, 4, 1)
@@ -65,11 +65,8 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_throws_x_out_of_range(self):
         b = Bitmap_C_Interface(2, 4, 1)
-        try:
+        with self.assertRaises(ValueError):
             b[2, 1] = 100
-            self.fail("should have thrown")
-        except ValueError:
-            pass
 
     def test_max(self):
         b = Bitmap_C_Interface(2, 4, 1)
@@ -78,18 +75,13 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_uninitialized(self):
         b = Bitmap_C_Interface(2, 4, 1)
-        try:
-            b[1, 1]
-            self.fail("should have thrown")
-        except RuntimeError:
-            pass
+        with self.assertRaises(RuntimeError):
+            b[1, 1]  # pylint: disable=pointless-statement
 
     def test_validate_throws(self):
         b = Bitmap_C_Interface(2, 4, 1)
-        try:
+        with self.assertRaises(ValueError):
             b.validate()
-        except ValueError:
-            pass
 
     def test_repr(self):
         b = Bitmap_C_Interface(3, 2, 1)
@@ -103,6 +95,6 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_decode(self):
         b = Bitmap_C_Interface(4, 4, 1)
-        self.assertEqual((0, 0), b._decode(0))
-        encoded = b._abs_pos(3, 3)
-        self.assertEqual((3, 3), b._decode(encoded))
+        self.assertEqual((0, 0), b._decode(0))  # pylint: disable=protected-access
+        encoded = b._abs_pos(3, 3)  # pylint: disable=protected-access
+        self.assertEqual((3, 3), b._decode(encoded))  # pylint: disable=protected-access
