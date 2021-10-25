@@ -42,6 +42,11 @@ Usage Example
         pass
 
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/imageload/en/latest/>`_.
+
 Contributing
 ============
 
