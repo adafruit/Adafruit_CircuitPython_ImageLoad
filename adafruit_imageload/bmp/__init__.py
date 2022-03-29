@@ -53,7 +53,7 @@ def load(file, *, bitmap=None, palette=None):
         raise NotImplementedError("bitmask compression unsupported")
 
     if colors == 0:
-        colors = 2 ** color_depth
+        colors = 2**color_depth
     from . import indexed
 
     return indexed.load(

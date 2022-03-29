@@ -58,7 +58,7 @@ def load(
 
     if bitmap:
         minimum_color_depth = 1
-        while colors > 2 ** minimum_color_depth:
+        while colors > 2**minimum_color_depth:
             minimum_color_depth *= 2
 
         if sys.maxsize > 1073741823:
