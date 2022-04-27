@@ -32,14 +32,14 @@ def inflate_tilegrid(
     inflate a TileGrid of ``target_size`` in tiles from a 3x3 spritesheet by duplicating
     the center rows and columns.
 
-    :param string bmp_path: filepath to the 3x3 spritesheet bitmap file
-    :param tuple target_size: desired size in tiles (target_width, target_height)
+    :param Optional[str] bmp_path: filepath to the 3x3 spritesheet bitmap file
+    :param Optional[tuple] target_size: desired size in tiles (target_width, target_height)
     :param Optional[tuple] tile_size: size of the tiles in the 3x3 spritesheet. If
       None is used it will equally divide the width and height of the Bitmap by 3.
-    :param Union[tuple, int] transparent_index: a single index within the palette to
+    :param Optional[Union[tuple, int]] transparent_index: a single index within the palette to
       make transparent, or a tuple of multiple indexes to make transparent
-    :param OnDiskBitmap bmp_obj: Already loaded 3x3 spritesheet in an OnDiskBitmap
-    :param Palette bmp_palette: Already loaded spritesheet Palette
+    :param Optional[OnDiskBitmap] bmp_obj: Already loaded 3x3 spritesheet in an OnDiskBitmap
+    :param Optional[Palette] bmp_palette: Already loaded spritesheet Palette
     """
 
     # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
