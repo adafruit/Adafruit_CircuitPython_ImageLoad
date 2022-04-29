@@ -12,3 +12,6 @@
 
 .. automodule:: adafruit_imageload.bmp.indexed
   :members:
+
+.. automodule:: adafruit_imageload.tilegrid_inflator
+   :members:
