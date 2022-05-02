@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Tim Cocks for Adafruit Industries
+# SPDX-FileCopyrightText: Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -9,25 +10,30 @@
 Use a 3x3 spritesheet to inflate a larger grid of tiles, duplicating the center rows and
 columns as many times as needed to reach a target size.
 
-* Author(s): Tim Cocks
+* Author(s): Tim Cocks, Matt Land
 
 """
+import displayio
+import adafruit_imageload
+
+try:
+    from typing import Tuple, Optional, List, Union
+    from displayio import Palette, Bitmap, OnDiskBitmap, TileGrid
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-import displayio
-import adafruit_imageload
-
 
 def inflate_tilegrid(
-    bmp_path=None,
-    target_size=(3, 3),
-    tile_size=None,
-    transparent_index=None,
-    bmp_obj=None,
-    bmp_palette=None,
-):
+    bmp_path: str = None,
+    target_size: Tuple[int, int] = (3, 3),
+    tile_size: List[int] = None,
+    transparent_index: Optional[Union[tuple, int]] = None,
+    bmp_obj: Optional[OnDiskBitmap] = None,
+    bmp_palette: Optional[Palette] = None,
+) -> TileGrid:
     """
     inflate a TileGrid of ``target_size`` in tiles from a 3x3 spritesheet by duplicating
     the center rows and columns.
@@ -47,11 +53,13 @@ def inflate_tilegrid(
     if bmp_path is None and (bmp_obj is None and bmp_palette is None):
         raise AttributeError("Must pass either bmp_path or bmp_obj and bmp_palette")
 
+    image: Bitmap
+    palette: Palette
     if bmp_path is not None:
-        image, palette = adafruit_imageload.load(bmp_path)
+        image, palette = adafruit_imageload.load(bmp_path)  # type: ignore[assignment]
     else:
-        image = bmp_obj
-        palette = bmp_palette
+        image = bmp_obj  # type: ignore[assignment]
+        palette = bmp_palette  # type: ignore[assignment]
 
     if transparent_index is not None:
         if isinstance(transparent_index, tuple):

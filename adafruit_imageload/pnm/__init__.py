@@ -16,13 +16,35 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 """
 # pylint: disable=import-outside-toplevel
 
+try:
+    from typing import (
+        Tuple,
+        Iterator,
+        Optional,
+        List,
+        Iterable,
+        Union,
+        Callable,
+    )
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ..displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, header, *, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    header: bytes,
+    *,
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
-    Scan for netpbm format info, skip over comments, and and delegate to a submodule
+    Scan for netpbm format info, skip over comments, and delegate to a submodule
     to do the actual data loading.
     Formats P1, P4 have two space padded pieces of information: width and height.
     All other formats have three: width, height, and max color value.
@@ -31,7 +53,7 @@ def load(file, header, *, bitmap=None, palette=None):
     # pylint: disable=too-many-branches
     magic_number = header[:2]
     file.seek(2)
-    pnm_header = []
+    pnm_header = []  # type: List[int]
     next_value = bytearray()
     while True:
         # We have all we need at length 3 for formats P2, P3, P5, P6
@@ -40,44 +62,64 @@ def load(file, header, *, bitmap=None, palette=None):
                 from . import pgm
 
                 return pgm.load(
-                    file, magic_number, pnm_header, bitmap=bitmap, palette=palette
+                    file,
+                    magic_number,
+                    pnm_header,
+                    bitmap=bitmap,
+                    palette=palette,
                 )
 
             if magic_number == b"P3":
                 from . import ppm_ascii
 
                 return ppm_ascii.load(
-                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                    file,
+                    pnm_header[0],
+                    pnm_header[1],
+                    bitmap=bitmap,
+                    palette=palette,
                 )
 
             if magic_number == b"P6":
                 from . import ppm_binary
 
                 return ppm_binary.load(
-                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                    file,
+                    pnm_header[0],
+                    pnm_header[1],
+                    bitmap=bitmap,
+                    palette=palette,
                 )
 
         if len(pnm_header) == 2 and magic_number in [b"P1", b"P4"]:
-            bitmap = bitmap(pnm_header[0], pnm_header[1], 1)
+            bitmap = bitmap(pnm_header[0], pnm_header[1], 1)  # type: Bitmap
             if palette:
-                palette = palette(1)
+                palette = palette(1)  # type: Palette
                 palette[0] = b"\xFF\xFF\xFF"
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 
                 return pbm_ascii.load(
-                    file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                    file,
+                    pnm_header[0],
+                    pnm_header[1],
+                    bitmap=bitmap,
+                    palette=palette,
                 )
 
             from . import pbm_binary
 
             return pbm_binary.load(
-                file, pnm_header[0], pnm_header[1], bitmap=bitmap, palette=palette
+                file,
+                pnm_header[0],
+                pnm_header[1],
+                bitmap=bitmap,
+                palette=palette,
             )
 
         next_byte = file.read(1)
         if next_byte == b"":
-            raise RuntimeError("Unsupported image format {}".format(magic_number))
+            raise RuntimeError("Unsupported image format {!r}".format(magic_number))
         if next_byte == b"#":  # comment found, seek until a newline or EOF is found
             while file.read(1) not in [b"", b"\n"]:  # EOF or NL
                 pass

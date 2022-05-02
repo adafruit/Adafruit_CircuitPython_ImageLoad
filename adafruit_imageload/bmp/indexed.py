@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
+# SPDX-FileCopyrightText: Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -8,33 +9,43 @@
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette from an indexed BMP.
 
-* Author(s): Scott Shawcroft
+* Author(s): Scott Shawcroft, Matt Land
 
 """
 
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 import sys
 
 try:
+    from typing import Tuple, Optional
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ..displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
+
+try:
     from bitmaptools import readinto as _bitmap_readinto
 except ImportError:
-    _bitmap_readinto = None  # pylint: disable=invalid-name
+    _bitmap_readinto = None  # pylint: disable=invalid-name  # type: Callable
+
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(
-    file,
-    width,
-    height,
-    data_start,
-    colors,
-    color_depth,
-    compression,
+    file: BufferedReader,
+    width: int,
+    height: int,
+    data_start: int,
+    colors: int,
+    color_depth: int,
+    compression: int,
     *,
-    bitmap=None,
-    palette=None
-):
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None,
+) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads indexed bitmap data into bitmap and palette objects.
 
     :param file file: The open bmp file
@@ -46,7 +57,7 @@ def load(
     :param int compression: 0 - none, 1 - 8bit RLE, 2 - 4bit RLE"""
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     if palette:
-        palette = palette(colors)
+        palette = palette(colors)  # type: Palette
 
         file.seek(data_start - colors * 4)
         for value in range(colors):
@@ -67,7 +78,7 @@ def load(
 
             # convert unsigned int to signed int when height is negative
             height = negative_height_check(height)
-        bitmap = bitmap(width, abs(height), colors)
+        bitmap = bitmap(width, abs(height), colors)  # type: Bitmap
         file.seek(data_start)
         line_size = width // (8 // color_depth)
         if width % (8 // color_depth) != 0:
@@ -122,7 +133,13 @@ def load(
     return bitmap, palette
 
 
-def decode_rle(bitmap, file, compression, y_range, width):
+def decode_rle(
+    bitmap: Bitmap,
+    file: BufferedReader,
+    compression: int,
+    y_range: Tuple[int, int, int],
+    width: int,
+) -> None:
     """Helper to decode RLE images"""
     # pylint: disable=too-many-locals,too-many-nested-blocks,too-many-branches
 

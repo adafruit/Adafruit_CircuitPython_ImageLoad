@@ -14,9 +14,22 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
+try:
+    from typing import Tuple, Set, Optional
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ...displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
 
 
-def load(file, width, height, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    width: int,
+    height: int,
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None,
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Load a PGM ascii file (P2)
     """
@@ -34,9 +47,9 @@ def load(file, width, height, bitmap=None, palette=None):
             pixel = bytearray()
         pixel += byte
     if palette:
-        palette = build_palette(palette, _palette_colors)
+        palette = build_palette(palette, _palette_colors)  # type: Palette
     if bitmap:
-        bitmap = bitmap(width, height, len(_palette_colors))
+        bitmap = bitmap(width, height, len(_palette_colors))  # type: Bitmap
         _palette_colors = list(_palette_colors)
         file.seek(data_start)
         for y in range(height):
@@ -52,7 +65,9 @@ def load(file, width, height, bitmap=None, palette=None):
     return bitmap, palette
 
 
-def build_palette(palette_class, palette_colors):  # pylint: disable=duplicate-code
+def build_palette(
+    palette_class: PaletteConstructor, palette_colors: Set[int]
+) -> Palette:  # pylint: disable=duplicate-code
     """
     construct the Palette, and populate it with the set of palette_colors
     """

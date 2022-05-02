@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
+# SPDX-FileCopyrightText: Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -8,16 +9,29 @@
 
 Load pixel values (indices or colors) into a bitmap and colors into a palette from a BMP file.
 
-* Author(s): Scott Shawcroft
+* Author(s): Scott Shawcroft, Matt Land
 
 """
 # pylint: disable=import-outside-toplevel
+
+try:
+    from typing import Tuple, Optional, Set, List
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ..displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, *, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    *,
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None
+) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads a bmp image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.
