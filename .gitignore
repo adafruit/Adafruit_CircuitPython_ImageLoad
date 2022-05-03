@@ -45,8 +45,3 @@ _build
 .idea
 .vscode
 *~
-
-# virtualenv
-Pipfile
-Pipfile.lock
-Makefile

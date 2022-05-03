@@ -25,7 +25,6 @@ repos:
         types: [python]
         args:
           - --disable=consider-using-f-string
-          - --min-similarity-lines=14
         exclude: "^(docs/|examples/|tests/|setup.py$)"
     -   id: pylint
         name: pylint (example code)
