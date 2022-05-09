@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2019 Radomir Dopieralski for Adafruit Industries
+# SPDX-FileCopyrightText: 2022 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -9,22 +10,35 @@
 Load pixel values (indices or colors) into a bitmap and colors into a palette
 from a GIF file.
 
-* Author(s): Radomir Dopieralski
+* Author(s): Radomir Dopieralski, Matt Land
 
 """
 
 import struct
 
+try:
+    from typing import Tuple, Iterator, Optional, List
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from .displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, *, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    *,
+    bitmap: BitmapConstructor,
+    palette: PaletteConstructor = None
+) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads a GIF image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.
 
+    :param BufferedReader file: The *.gif file being loaded
     :param object bitmap: Type to store bitmap data. Must have API similar to `displayio.Bitmap`.
       Will be skipped if None
     :param object palette: Type to store the palette. Must have API similar to
@@ -32,7 +46,9 @@ def load(file, *, bitmap=None, palette=None):
     header = file.read(6)
     if header not in {b"GIF87a", b"GIF89a"}:
         raise ValueError("Not a GIF file")
-    width, height, flags, _, _ = struct.unpack("<HHBBB", file.read(7))
+    width, height, flags, _, _ = struct.unpack(  # pylint: disable=no-member
+        "<HHBBB", file.read(7)
+    )
     if (flags & 0x80) != 0:
         palette_size = 1 << ((flags & 0x07) + 1)
         palette_obj = palette(palette_size)
@@ -57,9 +73,11 @@ def load(file, *, bitmap=None, palette=None):
     return bitmap_obj, palette_obj
 
 
-def _read_frame(file, bitmap):
-    """Read a signle frame and apply it to the bitmap."""
-    ddx, ddy, width, _, flags = struct.unpack("<HHHHB", file.read(9))
+def _read_frame(file: BufferedReader, bitmap: Bitmap) -> None:
+    """Read a single frame and apply it to the bitmap."""
+    ddx, ddy, width, _, flags = struct.unpack(  # pylint: disable=no-member
+        "<HHHHB", file.read(9)
+    )
     if (flags & 0x40) != 0:
         raise NotImplementedError("Interlacing not supported")
     if (flags & 0x80) != 0:
@@ -78,7 +96,7 @@ def _read_frame(file, bitmap):
                 y += 1
 
 
-def _read_blockstream(file):
+def _read_blockstream(file: BufferedReader) -> Iterator[int]:
     """Read a block from a file."""
     while True:
         size = file.read(1)[0]
@@ -95,21 +113,21 @@ class EndOfData(Exception):
 class LZWDict:
     """A dictionary of LZW codes."""
 
-    def __init__(self, code_size):
+    def __init__(self, code_size: int) -> None:
         self.code_size = code_size
         self.clear_code = 1 << code_size
         self.end_code = self.clear_code + 1
-        self.codes = []
-        self.last = None
+        self.codes = []  # type: List[bytes]
+        self.last = b""
         self.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         """Reset the dictionary to default codes."""
         self.last = b""
         self.code_len = self.code_size + 1
         self.codes[:] = []
 
-    def decode(self, code):
+    def decode(self, code: int) -> bytes:
         """Decode a code."""
         if code == self.clear_code:
             self.clear()
@@ -133,7 +151,7 @@ class LZWDict:
         return value
 
 
-def lzw_decode(data, code_size):
+def lzw_decode(data: Iterator[int], code_size: int) -> Iterator[bytes]:
     """Decode LZW-compressed data."""
     dictionary = LZWDict(code_size)
     bit = 0

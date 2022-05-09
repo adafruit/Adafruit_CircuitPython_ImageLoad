@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: Matt Land
+# SPDX-FileCopyrightText: 2022 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -16,15 +16,28 @@ return None for pallet.
 
 """
 
+try:
+    from typing import Tuple, Optional
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, width, height, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    width: int,
+    height: int,
+    bitmap: Bitmap,
+    palette: Palette = None,
+) -> Tuple[Bitmap, Optional[Palette]]:
     """
     Load a P1 'PBM' ascii image into the displayio.Bitmap
     """
-    next_byte = True
+    next_byte = b"1"  # just to start the iterator
     for y in range(height):
         x = 0
         while next_byte:

@@ -115,3 +115,18 @@ For example, the Bitmap coordinate ``[0,0]`` has the value (integer) ``5``.
 
 
 This corresponds to the the Palette object's, ``[5]`` which is ``b'\x00\x00\xff\x00'``. This is a byte string that represents a color.
+
+====================
+Mypy & type checking
+====================
+
+Mypy was tested with version 0.950 and the mypy.ini in project root.
+Since checks are not currently not passing, it is not installed as a commit hook.
+
+Setup: In your virtual environment, run:
+
+    pip3 install mypy==0.050
+
+Developing: To manually run checks, run:
+
+    mypy .

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: Matt Land
+# SPDX-FileCopyrightText: 2022 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -15,9 +15,23 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
 """
 # pylint: disable=import-outside-toplevel
+try:
+    from typing import Tuple, Optional, Set, List
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ...displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
 
 
-def load(file, magic_number, header, *, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    magic_number: bytes,
+    header: List[int],
+    *,
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Perform the load of Netpbm greyscale images (P2, P5)
     """

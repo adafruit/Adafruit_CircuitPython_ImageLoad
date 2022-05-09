@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: Matt Land
+# SPDX-FileCopyrightText: 2022 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -19,8 +19,28 @@ return None for pallet.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
+try:
+    from typing import (
+        Tuple,
+        Iterator,
+        Optional,
+        List,
+        Set,
+    )
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+    from ..displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
 
-def load(file, width, height, bitmap=None, palette=None):
+
+def load(
+    file: BufferedReader,
+    width: int,
+    height: int,
+    bitmap: BitmapConstructor = None,
+    palette: PaletteConstructor = None,
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     :param stream file: infile with the position set at start of data
     :param int width:
@@ -30,19 +50,19 @@ def load(file, width, height, bitmap=None, palette=None):
     :param palette: displayio.Palette class
     :return tuple:
     """
-    palette_colors = set()
+    palette_colors = set()  # type: Set[bytes]
     data_start = file.tell()
     for triplet in read_three_colors(file):
         palette_colors.add(triplet)
 
     if palette:
-        palette = palette(len(palette_colors))
+        palette = palette(len(palette_colors))  # type: Palette
         for counter, color in enumerate(palette_colors):
             palette[counter] = color
     if bitmap:
         file.seek(data_start)
-        bitmap = bitmap(width, height, len(palette_colors))
-        palette_colors = list(palette_colors)
+        bitmap = bitmap(width, height, len(palette_colors))  # type: Bitmap
+        palette_colors = list(palette_colors)  # type: List[bytes]
         for y in range(height):
             for x in range(width):
                 for color in read_three_colors(file):
@@ -51,13 +71,13 @@ def load(file, width, height, bitmap=None, palette=None):
     return bitmap, palette
 
 
-def read_three_colors(file):
+def read_three_colors(file: BufferedReader) -> Iterator[bytes]:
     """
     Generator to read integer values from file, in groups of three.
     Each value can be len 1-3, for values 0 - 255, space padded.
     :return tuple[int]:
     """
-    triplet = []
+    triplet = []  # type: List[int]
     color = bytearray()
     while True:
         this_byte = file.read(1)

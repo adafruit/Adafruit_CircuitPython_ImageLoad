@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: Matt Land
+# SPDX-FileCopyrightText: 2022 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -15,14 +15,26 @@ return None for pallet.
 * Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
+try:
+    from typing import Tuple, Optional, Iterator
+    from io import BufferedReader
+    from displayio import Palette, Bitmap
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(file, width, height, bitmap=None, palette=None):
+def load(
+    file: BufferedReader,
+    width: int,
+    height: int,
+    bitmap: Bitmap,
+    palette: Palette = None,
+) -> Tuple[Bitmap, Optional[Palette]]:
     """
-    Load a P4 'PBM' binary image into the displayio.Bitmap
+    Load a P4 'PBM' binary image into the Bitmap
     """
     x = 0
     y = 0
@@ -41,7 +53,7 @@ def load(file, width, height, bitmap=None, palette=None):
     return bitmap, palette
 
 
-def iterbits(b):
+def iterbits(b: bytes) -> Iterator[int]:
     """
     generator to iterate over the bits in a byte (character)
     """
@@ -50,7 +62,7 @@ def iterbits(b):
         yield (in_char >> i) & 1
 
 
-def reverse(b):
+def reverse(b: int) -> int:
     """
     reverse bit order so the iterbits works
     """
