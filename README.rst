@@ -13,6 +13,10 @@ Introduction
     :target: https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad/actions/
     :alt: Build Status
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+    :alt: Code Style: Black
+
 This library decodes an image file into new bitmap and palette objects of the provided type. It's
 designed to load code needed during decoding as needed. This is meant to minimize the memory
 overhead of the decoding code.
