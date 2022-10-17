@@ -80,4 +80,8 @@ def load(
             from . import gif
 
             return gif.load(file, bitmap=bitmap, palette=palette)
+        if header.startswith(b"\x89PN"):
+            from . import png
+
+            return png.load(file, bitmap=bitmap, palette=palette)
         raise RuntimeError("Unsupported image format")
