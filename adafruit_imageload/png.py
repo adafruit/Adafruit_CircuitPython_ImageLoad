@@ -13,16 +13,22 @@ from a PNG file.
 
 """
 
+try:
+    # pylint: disable=unused-import
+    import typing
+    from .displayio_types import PaletteConstructor, BitmapConstructor
+except ImportError:
+    pass
+
 import struct
 import zlib
-
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(
-    file, *, bitmap, palette=None
+    file: str, *, bitmap: BitmapConstructor, palette: PaletteConstructor = None
 ):  # pylint: disable=too-many-locals,too-many-branches
     """Loads a PNG image from the open ``file``.
 
