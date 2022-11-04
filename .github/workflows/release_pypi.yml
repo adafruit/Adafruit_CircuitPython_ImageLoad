@@ -2,18 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 
-name: PyPI Release Actions
+name: Build CI
 
-on:
-  release:
-    types: [published]
+on: [pull_request, push]
 
 jobs:
-  upload-release-assets:
+  test:
     runs-on: ubuntu-latest
     steps:
-    - name: Run PyPI Release CI workflow
-      uses: adafruit/workflows-circuitpython-libs/release-pypi@main
-      with:
-        pypi-username: ${{ secrets.pypi_username }}
-        pypi-password: ${{ secrets.pypi_password }}
+    - name: Run Build CI workflow
+      uses: adafruit/workflows-circuitpython-libs/build@main
