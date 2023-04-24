@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -31,7 +31,7 @@ def load(
     width: int,
     height: int,
     bitmap: Bitmap,
-    palette: Palette = None,
+    palette: Optional[Palette] = None,
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """
     Load a P4 'PBM' binary image into the Bitmap

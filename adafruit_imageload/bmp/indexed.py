@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -43,9 +43,9 @@ def load(
     color_depth: int,
     compression: int,
     *,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None,
-) -> Tuple[Bitmap, Optional[Palette]]:
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None,
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """Loads indexed bitmap data into bitmap and palette objects.
 
     :param file file: The open bmp file
@@ -54,19 +54,24 @@ def load(
     :param int data_start: Byte location where the data starts (after headers)
     :param int colors: Number of distinct colors in the image
     :param int color_depth: Number of bits used to store a value
-    :param int compression: 0 - none, 1 - 8bit RLE, 2 - 4bit RLE"""
+    :param int compression: 0 - none, 1 - 8bit RLE, 2 - 4bit RLE
+    :param BitmapConstructor bitmap: a function that returns a displayio.Bitmap
+    :param PaletteConstructor palette: a function that returns a displayio.Palette
+    """
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+    palette_obj = None
     if palette:
-        palette = palette(colors)  # type: Palette
+        palette_obj = palette(colors)
 
         file.seek(data_start - colors * 4)
         for value in range(colors):
             c_bytes = file.read(4)
             # Need to swap red & blue bytes (bytes 0 and 2)
-            palette[value] = bytes(
+            palette_obj[value] = bytes(
                 b"".join([c_bytes[2:3], c_bytes[1:2], c_bytes[0:1], c_bytes[3:1]])
             )
 
+    bitmap_obj = None
     if bitmap:
         minimum_color_depth = 1
         while colors > 2**minimum_color_depth:
@@ -78,7 +83,7 @@ def load(
 
             # convert unsigned int to signed int when height is negative
             height = negative_height_check(height)
-        bitmap = bitmap(width, abs(height), colors)  # type: Bitmap
+        bitmap_obj = bitmap(width, abs(height), colors)
         file.seek(data_start)
         line_size = width // (8 // color_depth)
         if width % (8 // color_depth) != 0:
@@ -97,10 +102,9 @@ def load(
             range3 = 1
 
         if compression == 0:
-
             if _bitmap_readinto:
                 _bitmap_readinto(
-                    bitmap,
+                    bitmap_obj,
                     file,
                     bits_per_pixel=color_depth,
                     element_size=4,
@@ -120,17 +124,17 @@ def load(
                         pixel = (
                             chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))
                         ) & mask
-                        bitmap[offset + x] = pixel
+                        bitmap_obj[offset + x] = pixel
         elif compression in (1, 2):
             decode_rle(
-                bitmap=bitmap,
+                bitmap=bitmap_obj,
                 file=file,
                 compression=compression,
                 y_range=(range1, range2, range3),
                 width=width,
             )
 
-    return bitmap, palette
+    return bitmap_obj, palette_obj
 
 
 def decode_rle(

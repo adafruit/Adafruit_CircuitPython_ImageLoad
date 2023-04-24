@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -77,10 +77,15 @@ def load(
 
             return pnm.load(file, header, bitmap=bitmap, palette=palette)
         if header.startswith(b"GIF"):
+            if not bitmap:
+                raise RuntimeError("bitmap argument required")
+
             from . import gif
 
             return gif.load(file, bitmap=bitmap, palette=palette)
         if header.startswith(b"\x89PN"):
+            if not bitmap:
+                raise RuntimeError("bitmap argument required")
             from . import png
 
             return png.load(file, bitmap=bitmap, palette=palette)

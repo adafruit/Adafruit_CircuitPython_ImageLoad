@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -29,8 +29,8 @@ def load(
     magic_number: bytes,
     header: List[int],
     *,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Perform the load of Netpbm greyscale images (P2, P5)

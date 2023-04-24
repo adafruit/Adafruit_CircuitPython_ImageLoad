@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -15,7 +15,7 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
 """
 try:
-    from typing import Tuple, Optional, Set, List
+    from typing import Tuple, Optional, Set
     from io import BufferedReader
     from displayio import Palette, Bitmap
     from ...displayio_types import PaletteConstructor, BitmapConstructor
@@ -27,8 +27,8 @@ def load(
     file: BufferedReader,
     width: int,
     height: int,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None,
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None,
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Load a P5 format file (binary), handle PGM (greyscale)
@@ -40,17 +40,18 @@ def load(
         for pixel in data_line:
             palette_colors.add(pixel)
 
+    palette_obj = None
     if palette:
-        palette = build_palette(palette, palette_colors)  # type: Palette
+        palette_obj = build_palette(palette, palette_colors)
+    bitmap_obj = None
     if bitmap:
-        bitmap = bitmap(width, height, len(palette_colors))  # type: Bitmap
-        palette_colors = list(palette_colors)  # type: List[int]
+        bitmap_obj = bitmap(width, height, len(palette_colors))
         file.seek(data_start)
         for y in range(height):
             data_line = iter(bytes(file.read(width)))
             for x, pixel in enumerate(data_line):
-                bitmap[x, y] = palette_colors.index(pixel)
-    return bitmap, palette
+                bitmap_obj[x, y] = list(palette_colors).index(pixel)
+    return bitmap_obj, palette_obj
 
 
 def build_palette(

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2019 Radomir Dopieralski for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -32,7 +32,7 @@ def load(
     file: BufferedReader,
     *,
     bitmap: BitmapConstructor,
-    palette: PaletteConstructor = None
+    palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads a GIF image from the open ``file``.
 
@@ -50,6 +50,8 @@ def load(
         "<HHBBB", file.read(7)
     )
     if (flags & 0x80) != 0:
+        if not palette:
+            raise RuntimeError("palette argument required")
         palette_size = 1 << ((flags & 0x07) + 1)
         palette_obj = palette(palette_size)
         for i in range(palette_size):

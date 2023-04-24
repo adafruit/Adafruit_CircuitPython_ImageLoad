@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -40,8 +40,8 @@ def load(
     file: BufferedReader,
     header: bytes,
     *,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Scan for netpbm format info, skip over comments, and delegate to a submodule
@@ -92,10 +92,15 @@ def load(
                 )
 
         if len(pnm_header) == 2 and magic_number in [b"P1", b"P4"]:
-            bitmap = bitmap(pnm_header[0], pnm_header[1], 1)  # type: Bitmap
+            if not bitmap:
+                raise RuntimeError(
+                    "A bitmap constructor is required for this type of pnm format file"
+                )
+            bitmap_obj = bitmap(pnm_header[0], pnm_header[1], 1)
+            palette_obj = None
             if palette:
-                palette = palette(1)  # type: Palette
-                palette[0] = b"\xFF\xFF\xFF"
+                palette_obj = palette(1)
+                palette_obj[0] = b"\xFF\xFF\xFF"
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 
@@ -103,8 +108,8 @@ def load(
                     file,
                     pnm_header[0],
                     pnm_header[1],
-                    bitmap=bitmap,
-                    palette=palette,
+                    bitmap=bitmap_obj,
+                    palette=palette_obj,
                 )
 
             from . import pbm_binary
@@ -113,8 +118,8 @@ def load(
                 file,
                 pnm_header[0],
                 pnm_header[1],
-                bitmap=bitmap,
-                palette=palette,
+                bitmap=bitmap_obj,
+                palette=palette_obj,
             )
 
         next_byte = file.read(1)
