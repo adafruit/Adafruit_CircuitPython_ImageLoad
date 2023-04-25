@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Radomir Dopieralski
+# SPDX-FileCopyrightText: 2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -9,13 +10,14 @@
 Load pixel values (indices or colors) into a bitmap and colors into a palette
 from a PNG file.
 
-* Author(s): Radomir Dopieralski
+* Author(s): Radomir Dopieralski, Matt Land
 
 """
 
 try:
-    # pylint: disable=unused-import
-    import typing
+    from io import BufferedReader
+    from typing import Optional, Tuple
+    from displayio import Palette, Bitmap
     from .displayio_types import PaletteConstructor, BitmapConstructor
 except ImportError:
     pass
@@ -28,9 +30,13 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(
-    file: str, *, bitmap: BitmapConstructor, palette: PaletteConstructor = None
-):  # pylint: disable=too-many-locals,too-many-branches
-    """Loads a PNG image from the open ``file``.
+    file: BufferedReader,
+    *,
+    bitmap: BitmapConstructor,
+    palette: Optional[PaletteConstructor] = None
+) -> Tuple[Bitmap, Optional[Palette]]:
+    """
+    Loads a PNG image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.
 
@@ -38,7 +44,9 @@ def load(
     :param object bitmap: Type to store bitmap data. Must have API similar to
       `displayio.Bitmap`.
     :param object palette: Type to store the palette. Must have API similar to
-      `displayio.Palette`. Will be skipped if None"""
+      `displayio.Palette`. Will be skipped if None
+    """
+    # pylint: disable=too-many-locals,too-many-branches
     header = file.read(8)
     if header != b"\x89PNG\r\n\x1a\n":
         raise ValueError("Not a PNG file")
@@ -46,7 +54,9 @@ def load(
     data = bytearray()
     pal = None
     mode = None
-    depth = None
+    depth = 0
+    width = 0
+    height = 0
     while True:
         size, chunk = struct.unpack(">I4s", file.read(8))
         if chunk == b"IHDR":
@@ -81,16 +91,16 @@ def load(
         else:
             file.seek(size, 1)  # skip unknown chunks
         file.seek(4, 1)  # skip CRC
-    data = zlib.decompress(data)
+    data_bytes = zlib.decompress(data)
     bmp = bitmap(width, height, 1 << depth)
     scanline = (width * depth + 7) // 8
     mem = memoryview(bmp)
     for y in range(height):
         dst = y * scanline
         src = y * (scanline + 1) + 1
-        filter_ = data[src - 1]
+        filter_ = data_bytes[src - 1]
         if filter_ == 0:
-            mem[dst : dst + scanline] = data[src : src + scanline]
+            mem[dst : dst + scanline] = data_bytes[src : src + scanline]
         else:
             raise NotImplementedError("Filters not supported")
     return bmp, pal

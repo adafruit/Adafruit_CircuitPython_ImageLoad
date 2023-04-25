@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -29,9 +29,9 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 def load(
     file: BufferedReader,
     *,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None
-) -> Tuple[Bitmap, Optional[Palette]]:
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """Loads a bmp image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.

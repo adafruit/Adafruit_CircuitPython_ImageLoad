@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Tim Cocks for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -27,9 +27,9 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def inflate_tilegrid(
-    bmp_path: str = None,
+    bmp_path: Optional[str] = None,
     target_size: Tuple[int, int] = (3, 3),
-    tile_size: List[int] = None,
+    tile_size: Optional[List[int]] = None,
     transparent_index: Optional[Union[tuple, int]] = None,
     bmp_obj: Optional[OnDiskBitmap] = None,
     bmp_palette: Optional[Palette] = None,
@@ -39,8 +39,8 @@ def inflate_tilegrid(
     the center rows and columns.
 
     :param Optional[str] bmp_path: filepath to the 3x3 spritesheet bitmap file
-    :param Optional[tuple] target_size: desired size in tiles (target_width, target_height)
-    :param Optional[tuple] tile_size: size of the tiles in the 3x3 spritesheet. If
+    :param tuple[int, int] target_size: desired size in tiles (target_width, target_height)
+    :param Optional[List[int]] tile_size: size of the tiles in the 3x3 spritesheet. If
       None is used it will equally divide the width and height of the Bitmap by 3.
     :param Optional[Union[tuple, int]] transparent_index: a single index within the palette to
       make transparent, or a tuple of multiple indexes to make transparent

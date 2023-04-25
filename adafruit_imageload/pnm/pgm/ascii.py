@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 # SPDX-FileCopyrightText: Brooke Storm
 # SPDX-FileCopyrightText: Sam McGahan
 #
@@ -27,8 +27,8 @@ def load(
     file: BufferedReader,
     width: int,
     height: int,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None,
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None,
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Load a PGM ascii file (P2)
@@ -46,11 +46,12 @@ def load(
             _palette_colors.add(int_pixel)
             pixel = bytearray()
         pixel += byte
+    palette_obj = None
     if palette:
-        palette = build_palette(palette, _palette_colors)  # type: Palette
+        palette_obj = build_palette(palette, _palette_colors)
+    bitmap_obj = None
     if bitmap:
-        bitmap = bitmap(width, height, len(_palette_colors))  # type: Bitmap
-        _palette_colors = list(_palette_colors)
+        bitmap_obj = bitmap(width, height, len(_palette_colors))
         file.seek(data_start)
         for y in range(height):
             for x in range(width):
@@ -61,8 +62,8 @@ def load(
                         break
                     pixel += byte
                 int_pixel = int("".join(["%c" % char for char in pixel]))
-                bitmap[x, y] = _palette_colors.index(int_pixel)
-    return bitmap, palette
+                bitmap_obj[x, y] = list(_palette_colors).index(int_pixel)
+    return bitmap_obj, palette_obj
 
 
 def build_palette(
