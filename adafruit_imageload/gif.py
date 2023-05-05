@@ -38,11 +38,12 @@ def load(
 
     Returns tuple of bitmap object and palette object.
 
-    :param BufferedReader file: The *.gif file being loaded
+    :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
+      with the data of a GIF file.
     :param object bitmap: Type to store bitmap data. Must have API similar to `displayio.Bitmap`.
-      Will be skipped if None
     :param object palette: Type to store the palette. Must have API similar to
-      `displayio.Palette`. Will be skipped if None"""
+      `displayio.Palette`. Will be skipped if None.
+    """
     header = file.read(6)
     if header not in {b"GIF87a", b"GIF89a"}:
         raise ValueError("Not a GIF file")
