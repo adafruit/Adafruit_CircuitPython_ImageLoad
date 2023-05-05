@@ -36,6 +36,8 @@ def load(
 
     Returns tuple of bitmap object and palette object.
 
+    :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
+      with the data of a BMP file.
     :param object bitmap: Type to store bitmap data. Must have API similar to `displayio.Bitmap`.
       Will be skipped if None
     :param object palette: Type to store the palette. Must have API similar to

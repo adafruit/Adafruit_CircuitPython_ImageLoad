@@ -37,14 +37,16 @@ def load(
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """
     Loads a PNG image from the open ``file``.
+    Only supports indexed color images.
 
     Returns tuple of bitmap object and palette object.
 
-    :param file: The *.png file being loaded
+    :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
+      with the data of a PNG file.
     :param object bitmap: Type to store bitmap data. Must have API similar to
       `displayio.Bitmap`.
     :param object palette: Type to store the palette. Must have API similar to
-      `displayio.Palette`. Will be skipped if None
+      `displayio.Palette`. Will be skipped if None.
     """
     # pylint: disable=too-many-locals,too-many-branches
     header = file.read(8)
