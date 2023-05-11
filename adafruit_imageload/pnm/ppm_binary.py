@@ -16,7 +16,7 @@ return None for pallet.
 
 """
 try:
-    from typing import Tuple, Optional, List, Set
+    from typing import Tuple, Optional, Set
     from io import BufferedReader
     from displayio import Palette, Bitmap
     from ..displayio_types import PaletteConstructor, BitmapConstructor
