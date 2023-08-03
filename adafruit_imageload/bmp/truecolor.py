@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022-2023 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Melissa LeBlanc-Williams
 #
 # SPDX-License-Identifier: MIT
 
 """
-`adafruit_imageload.bmp.indexed`
+`adafruit_imageload.bmp.truecolor`
 ====================================================
 
-Load pixel values (indices or colors) into a bitmap and colors into a palette from an indexed BMP.
+Load pixel colors into a bitmap from an truecolor BMP and return the correct colorconverter.
 
-* Author(s): Scott Shawcroft, Matt Land, Melissa LeBlanc-Williams
+* Author(s): Melissa LeBlanc-Williams
 
 """
 
