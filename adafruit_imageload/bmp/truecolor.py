@@ -52,6 +52,8 @@ def load(
     converter_obj = None
     bitmap_obj = None
     if bitmap:
+        # Set up a ColorConverter object and set appropriate colorspace
+        # to convert from based on the color depth
         input_colorspace = Colorspace.RGB888
         if color_depth == 16:
             input_colorspace = Colorspace.RGB555
@@ -65,6 +67,7 @@ def load(
         bitmap_obj = bitmap(width, abs(height), 65535)
         file.seek(data_start)
         line_size = width * (color_depth // 8)
+        # Set the seek direction based on whether the height value is negative or positive
         if height > 0:
             range1 = height - 1
             range2 = -1
