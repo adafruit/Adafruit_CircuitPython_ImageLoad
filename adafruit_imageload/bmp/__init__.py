@@ -44,8 +44,8 @@ def load(
       `displayio.Palette`. Will be skipped if None"""
     file.seek(10)
     data_start = int.from_bytes(file.read(4), "little")
-    # f.seek(14)
-    # bmp_header_length = int.from_bytes(file.read(4), 'little')
+    file.seek(14)
+    bmp_header_length = int.from_bytes(file.read(4), "little")
     # print(bmp_header_length)
     file.seek(0x12)  # Width of the bitmap in pixels
     _width = int.from_bytes(file.read(4), "little")
@@ -61,8 +61,18 @@ def load(
     compression = int.from_bytes(file.read(2), "little")
     file.seek(0x2E)  # Number of colors in the color palette
     colors = int.from_bytes(file.read(4), "little")
+    bitfield_masks = None
+    if compression == 3 and bmp_header_length >= 56:
+        bitfield_masks = {}
+        endianess = "little" if color_depth == 16 else "big"
+        file.seek(0x36)
+        bitfield_masks["red"] = int.from_bytes(file.read(4), endianess)
+        file.seek(0x3A)
+        bitfield_masks["green"] = int.from_bytes(file.read(4), endianess)
+        file.seek(0x3E)
+        bitfield_masks["blue"] = int.from_bytes(file.read(4), endianess)
 
-    if compression > 2:
+    if compression > 3:
         raise NotImplementedError("bitmask compression unsupported")
 
     if colors == 0 and color_depth >= 16:
@@ -74,6 +84,7 @@ def load(
             _height,
             data_start,
             color_depth,
+            bitfield_masks,
             bitmap=bitmap,
         )
     if colors == 0:
