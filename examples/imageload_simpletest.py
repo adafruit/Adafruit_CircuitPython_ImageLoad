@@ -11,7 +11,7 @@ tile_grid = displayio.TileGrid(image, pixel_shader=palette)
 
 group = displayio.Group()
 group.append(tile_grid)
-board.DISPLAY.show(group)
+board.DISPLAY.root_group = group
 
 while True:
     pass

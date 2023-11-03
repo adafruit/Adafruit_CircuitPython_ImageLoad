@@ -11,7 +11,7 @@ tile_grid = inflate_tilegrid(bmp_obj=image, bmp_palette=palette, target_size=(10
 
 group = displayio.Group()
 group.append(tile_grid)
-board.DISPLAY.show(group)
+board.DISPLAY.root_group = group
 
 while True:
     pass

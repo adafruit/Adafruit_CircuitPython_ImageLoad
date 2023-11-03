@@ -28,7 +28,7 @@ display = adafruit_ili9341.ILI9341(display_bus, width=320, height=240)
 
 # Make the display context
 splash = displayio.Group()
-display.show(splash)
+display.root_group = splash
 # image = "images/netpbm_p1_mono_ascii.pbm"
 # image = "images/netpbm_p2_ascii.pgm"
 # image = "images/netpbm_p3_rgb_ascii.ppm"
