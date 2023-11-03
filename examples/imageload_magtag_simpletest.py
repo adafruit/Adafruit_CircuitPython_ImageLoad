@@ -27,7 +27,7 @@ group = displayio.Group(scale=8)
 group.append(tile_grid)
 
 # show the group and refresh
-display.show(group)
+display.root_group = group
 display.refresh()
 
 while True:

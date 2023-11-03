@@ -36,7 +36,7 @@ group.append(rect)
 group.append(tile_grid)
 
 # show our group
-board.DISPLAY.show(group)
+board.DISPLAY.root_group = group
 
 # loop forever so it stays on the display
 while True:
