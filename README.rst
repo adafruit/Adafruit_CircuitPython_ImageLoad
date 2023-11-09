@@ -40,8 +40,7 @@ Usage Example
 
     group = displayio.Group()
     group.append(tile_grid)
-    board.DISPLAY.show(group)
-
+    board.DISPLAY.root_group = group
     while True:
         pass
 
