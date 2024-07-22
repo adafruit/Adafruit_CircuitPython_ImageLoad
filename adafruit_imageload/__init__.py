@@ -68,6 +68,7 @@ def load(
     with open_file as file:
         header = file.read(3)
         file.seek(0)
+        print(header)
         if header.startswith(b"BM"):
             from . import bmp
 
@@ -89,4 +90,8 @@ def load(
             from . import png
 
             return png.load(file, bitmap=bitmap, palette=palette)
+        if header.startswith(b"\xff\xd8"):
+            from . import jpg
+
+            return jpg.load(file, bitmap=bitmap, palette=palette)
         raise RuntimeError("Unsupported image format")
