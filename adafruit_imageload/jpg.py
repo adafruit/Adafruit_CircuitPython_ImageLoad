@@ -12,7 +12,7 @@ Load a JPG into a bitmap by calling the jpegio class.
 
 """
 
-#A separate try for jpegio. While it has wide support it is not universal, and this import may fail.
+#A separate try for jpegio. Not every board supports it and this import may fail.
 #If that happens an ImportError with a proper message needs to be raised
 try:
     from jpegio import JpegDecoder
