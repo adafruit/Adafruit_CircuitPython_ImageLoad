@@ -12,8 +12,8 @@ Load a JPG into a bitmap by calling the jpegio class.
 
 """
 
-#A separate try for jpegio. Not every board supports it and this import may fail.
-#If that happens an ImportError with a proper message needs to be raised
+# A separate try for jpegio. Not every board supports it and this import may fail.
+# If that happens an ImportError with a proper message needs to be raised
 try:
     from jpegio import JpegDecoder
 except ImportError:
@@ -31,10 +31,12 @@ from displayio import Bitmap, ColorConverter, Colorspace
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
-def load(file: BufferedReader,
-         *,
-         bitmap: BitmapConstructor,
-         ) -> Tuple[Bitmap, Optional[ColorConverter]]:
+
+def load(
+    file: BufferedReader,
+    *,
+    bitmap: BitmapConstructor,
+) -> Tuple[Bitmap, Optional[ColorConverter]]:
     """
     Loads a JPG image from the open ''file''.
     The JPG must be a Baseline JPG, Progressive and Lossless JPG formats are not supported.
