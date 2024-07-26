@@ -47,6 +47,7 @@ def load(
     palette is the desired palette type. The constructor should take the number of colors and
     support assignment to indices via [].
     """
+    # pylint: disable=too-many-branches
     if not bitmap or not palette:
         try:
             # use displayio if available
@@ -89,4 +90,8 @@ def load(
             from . import png
 
             return png.load(file, bitmap=bitmap, palette=palette)
+        if header.startswith(b"\xff\xd8"):
+            from . import jpg
+
+            return jpg.load(file, bitmap=bitmap)
         raise RuntimeError("Unsupported image format")
