@@ -61,10 +61,6 @@ def load(
     height = 0
     while True:
         size, chunk = struct.unpack(">I4s", file.read(8))
-        print("==================")
-        print(size)
-        print(chunk)
-        print('====================')
         if chunk == b"IHDR":
             (
                 width,
@@ -91,8 +87,10 @@ def load(
                 for i in range(pal_size):
                     pal[i] = file.read(3)
         elif chunk == b"tRNS":
-            transparent = file.read(size)
-            print(transparent)
+            trns_list = list(file.read(size))
+            indices = [i for i, x in enumerate(trns_list) if x == 0]
+            for index in indices:
+                pal.make_transparent(index)
         elif chunk == b"IDAT":
             data.extend(file.read(size))
         elif chunk == b"IEND":
