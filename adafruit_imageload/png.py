@@ -48,7 +48,7 @@ def load(
     :param object palette: Type to store the palette. Must have API similar to
       `displayio.Palette`. Will be skipped if None.
     """
-    # pylint: disable=too-many-locals,too-many-branches
+    # pylint: disable=too-many-locals,too-many-branches, consider-using-enumerate, too-many-statements
     header = file.read(8)
     if header != b"\x89PNG\r\n\x1a\n":
         raise ValueError("Not a PNG file")
@@ -87,10 +87,12 @@ def load(
                 for i in range(pal_size):
                     pal[i] = file.read(3)
         elif chunk == b"tRNS":
-            trns_list = list(file.read(size))
-            indices = [i for i, x in enumerate(trns_list) if x == 0]
-            for index in indices:
-                pal.make_transparent(index)
+            if size > len(pal):
+                raise ValueError("More transparency entries than palette entries")
+            trns_data = file.read(size)
+            for i in range(len(trns_data)):
+                if trns_data[i] == 0:
+                    pal.make_transparent(i)
         elif chunk == b"IDAT":
             data.extend(file.read(size))
         elif chunk == b"IEND":
