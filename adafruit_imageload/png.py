@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2022 Radomir Dopieralski
 # SPDX-FileCopyrightText: 2023 Matt Land
+# SPDX-FileCopyrightText: 2024 Channing Ramos
 #
 # SPDX-License-Identifier: MIT
 
@@ -10,7 +11,7 @@
 Load pixel values (indices or colors) into a bitmap and colors into a palette
 from a PNG file.
 
-* Author(s): Radomir Dopieralski, Matt Land
+* Author(s): Radomir Dopieralski, Matt Land, Channing Ramos
 
 """
 
