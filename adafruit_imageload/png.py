@@ -94,6 +94,7 @@ def load(
             for i in range(len(trns_data)):
                 if trns_data[i] == 0:
                     pal.make_transparent(i)
+            del trns_data
         elif chunk == b"IDAT":
             data.extend(file.read(size))
         elif chunk == b"IEND":
