@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2022 Radomir Dopieralski
 # SPDX-FileCopyrightText: 2023 Matt Land
+# SPDX-FileCopyrightText: 2024 Channing Ramos
 #
 # SPDX-License-Identifier: MIT
 
@@ -10,7 +11,7 @@
 Load pixel values (indices or colors) into a bitmap and colors into a palette
 from a PNG file.
 
-* Author(s): Radomir Dopieralski, Matt Land
+* Author(s): Radomir Dopieralski, Matt Land, Channing Ramos
 
 """
 
@@ -48,7 +49,7 @@ def load(
     :param object palette: Type to store the palette. Must have API similar to
       `displayio.Palette`. Will be skipped if None.
     """
-    # pylint: disable=too-many-locals,too-many-branches
+    # pylint: disable=too-many-locals,too-many-branches, consider-using-enumerate, too-many-statements
     header = file.read(8)
     if header != b"\x89PNG\r\n\x1a\n":
         raise ValueError("Not a PNG file")
@@ -86,6 +87,14 @@ def load(
                 pal = palette(pal_size)
                 for i in range(pal_size):
                     pal[i] = file.read(3)
+        elif chunk == b"tRNS":
+            if size > len(pal):
+                raise ValueError("More transparency entries than palette entries")
+            trns_data = file.read(size)
+            for i in range(len(trns_data)):
+                if trns_data[i] == 0:
+                    pal.make_transparent(i)
+            del trns_data
         elif chunk == b"IDAT":
             data.extend(file.read(size))
         elif chunk == b"IEND":
