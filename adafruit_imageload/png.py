@@ -112,7 +112,19 @@ def load(
         for y in range(height):
             dst = y * scanline
             src = y * (scanline + 1) + 1
-            mem[dst : dst + scanline] = data_bytes[src : src + scanline]
+            if depth < 8:
+                # Work around the bug in displayio.Bitmap
+                # https://github.com/adafruit/circuitpython/issues/6675
+                pixels_per_byte = 8 // depth
+                for x in range(0, width, pixels_per_byte):
+                    byte = data_bytes[src]
+                    for pixel in range(pixels_per_byte):
+                        bmp[x + pixel, y] = (
+                            byte >> ((pixels_per_byte - pixel - 1) * depth)
+                        ) & ((1 << depth) - 1)
+                    src += 1
+            else:
+                mem[dst : dst + scanline] = data_bytes[src : src + scanline]
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
