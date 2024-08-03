@@ -49,7 +49,7 @@ def load(
     :param object palette: Type to store the palette. Must have API similar to
       `displayio.Palette`. Will be skipped if None.
     """
-    # pylint: disable=too-many-locals,too-many-branches, consider-using-enumerate, too-many-statements
+    # pylint: disable=too-many-locals, too-many-branches, consider-using-enumerate, too-many-statements, import-outside-toplevel, invalid-name
     header = file.read(8)
     if header != b"\x89PNG\r\n\x1a\n":
         raise ValueError("Not a PNG file")
@@ -103,15 +103,80 @@ def load(
             file.seek(size, 1)  # skip unknown chunks
         file.seek(4, 1)  # skip CRC
     data_bytes = zlib.decompress(data)
-    bmp = bitmap(width, height, 1 << depth)
-    scanline = (width * depth + 7) // 8
-    mem = memoryview(bmp)
-    for y in range(height):
-        dst = y * scanline
-        src = y * (scanline + 1) + 1
-        filter_ = data_bytes[src - 1]
-        if filter_ == 0:
+    unit = (1, 0, 3, 1, 2, 0, 4)[mode]
+    scanline = (width * depth * unit + 7) // 8
+    colors = 1 << (depth * unit)
+    if mode == 3:  # indexed
+        bmp = bitmap(width, height, colors)
+        mem = memoryview(bmp)
+        for y in range(height):
+            dst = y * scanline
+            src = y * (scanline + 1) + 1
             mem[dst : dst + scanline] = data_bytes[src : src + scanline]
+        return bmp, pal
+    # RGB, RGBA or Grayscale
+    import displayio
+
+    if depth != 8:
+        raise ValueError("Must be 8bit depth.")
+    pal = displayio.ColorConverter(input_colorspace=displayio.Colorspace.RGB888)
+    bmp = bitmap(width, height, 65536)
+    prev = bytearray(scanline)
+    line = bytearray(scanline)
+    for y in range(height):
+        src = y * (scanline + 1)
+        filter_ = data_bytes[src]
+        src += 1
+        if filter_ == 0:
+            line[0:scanline] = data_bytes[src : src + scanline]
+        elif filter_ == 1:  # sub
+            for i in range(scanline):
+                a = line[i - unit] if i >= unit else 0
+                line[i] = (data_bytes[src] + a) & 0xFF
+                src += 1
+        elif filter_ == 2:  # up
+            for i in range(scanline):
+                b = prev[i]
+                line[i] = (data_bytes[src] + b) & 0xFF
+                src += 1
+        elif filter_ == 3:  # average
+            for i in range(scanline):
+                a = line[i - unit] if i >= unit else 0
+                b = prev[i]
+                line[i] = (data_bytes[src] + ((a + b) >> 1)) & 0xFF
+                src += 1
+        elif filter_ == 4:  # paeth
+            for i in range(scanline):
+                a = line[i - unit] if i >= unit else 0
+                b = prev[i]
+                c = prev[i - unit] if i >= unit else 0
+                p = a + b - c
+                pa = abs(p - a)
+                pb = abs(p - b)
+                pc = abs(p - c)
+                if pa <= pb and pa <= pc:
+                    p = a
+                elif pb <= pc:
+                    p = b
+                else:
+                    p = c
+                line[i] = (data_bytes[src] + p) & 0xFF
+                src += 1
         else:
-            raise NotImplementedError("Filters not supported")
+            raise ValueError("Wrong filter.")
+        prev, line = line, prev
+        if mode in (0, 4):  # grayscale
+            for x in range(width):
+                c = line[x * unit]
+                bmp[x, y] = pal.convert((c << 16) | (c << 8) | c)
+        elif mode in {2, 6}:  # rgb
+            for x in range(width):
+                bmp[x, y] = pal.convert(
+                    (line[x * unit + 0] << 16)
+                    | (line[x * unit + 1] << 8)
+                    | line[x * unit + 2]
+                )
+        else:
+            raise ValueError("Unsupported color mode.")
+    pal = displayio.ColorConverter(input_colorspace=displayio.Colorspace.RGB565)
     return bmp, pal
