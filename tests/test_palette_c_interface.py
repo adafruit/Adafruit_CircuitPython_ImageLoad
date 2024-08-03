@@ -28,7 +28,9 @@ These tests are to validate the displayio_shared_bindings classes that other tes
 * Author(s):  Matt Land
 
 """
+
 from unittest import TestCase
+
 from .displayio_shared_bindings import Palette_C_Interface
 
 
@@ -54,17 +56,17 @@ class TestPalette_C_Interface(TestCase):
     @staticmethod
     def test_set_byte():
         palette = Palette_C_Interface(1)
-        palette[0] = b"\xFF\xFF\xFF"
+        palette[0] = b"\xff\xff\xff"
 
     def test_get_byte(self):
         palette = Palette_C_Interface(1)
-        palette[0] = b"\xFF\xFF\xFF"
-        self.assertEqual(b"\xFF\xFF\xFF", palette[0])
+        palette[0] = b"\xff\xff\xff"
+        self.assertEqual(b"\xff\xff\xff", palette[0])
 
     @staticmethod
     def test_set_bytearray():
         palette = Palette_C_Interface(1)
-        palette[0] = bytearray(b"\xFF\xFF\xFF")
+        palette[0] = bytearray(b"\xff\xff\xff")
 
     def test_prevents_out_of_range(self):
         palette = Palette_C_Interface(1)
@@ -78,7 +80,7 @@ class TestPalette_C_Interface(TestCase):
     def test_prevents_set_non_allowed(self):
         palette = Palette_C_Interface(1)
         try:
-            palette[0] = "\xFF\xFF\xFF"  # attempt with a string, which is not allowed
+            palette[0] = "\xff\xff\xff"  # attempt with a string, which is not allowed
             self.fail("exception should have thrown")
         except ValueError as err:
             if "should be" not in str(err):
@@ -87,12 +89,12 @@ class TestPalette_C_Interface(TestCase):
     @staticmethod
     def test_validate_success():
         palette = Palette_C_Interface(1)
-        palette[0] = b"\xFF\xFF\xFF"
+        palette[0] = b"\xff\xff\xff"
         palette.validate()
 
     def test_validate_fails(self):
         palette = Palette_C_Interface(2)
-        palette[1] = b"\xFF\xFF\xFF"
+        palette[1] = b"\xff\xff\xff"
         try:
             palette.validate()
             self.fail("exception should have thrown")
@@ -103,5 +105,5 @@ class TestPalette_C_Interface(TestCase):
     @staticmethod
     def test_str():
         palette = Palette_C_Interface(1)
-        palette[0] = b"\xFF\xFF\xFF"
+        palette[0] = b"\xff\xff\xff"
         print(str(palette))

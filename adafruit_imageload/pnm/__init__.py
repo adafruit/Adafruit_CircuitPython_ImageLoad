@@ -14,21 +14,22 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-# pylint: disable=import-outside-toplevel
 
 try:
-    from typing import (
-        Tuple,
-        Iterator,
-        Optional,
-        List,
-        Iterable,
-        Union,
-        Callable,
-    )
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import (
+        Callable,
+        Iterable,
+        Iterator,
+        List,
+        Optional,
+        Tuple,
+        Union,
+    )
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -36,12 +37,12 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(
+def load(  # noqa: PLR0912 Too many branches
     file: BufferedReader,
     header: bytes,
     *,
     bitmap: Optional[BitmapConstructor] = None,
-    palette: Optional[PaletteConstructor] = None
+    palette: Optional[PaletteConstructor] = None,
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Scan for netpbm format info, skip over comments, and delegate to a submodule
@@ -50,7 +51,6 @@ def load(
     All other formats have three: width, height, and max color value.
     This load function will move the file stream pointer to the start of data in all cases.
     """
-    # pylint: disable=too-many-branches
     magic_number = header[:2]
     file.seek(2)
     pnm_header = []  # type: List[int]
@@ -100,7 +100,7 @@ def load(
             palette_obj = None
             if palette:
                 palette_obj = palette(1)
-                palette_obj[0] = b"\xFF\xFF\xFF"
+                palette_obj[0] = b"\xff\xff\xff"
             if magic_number.startswith(b"P1"):
                 from . import pbm_ascii
 
@@ -124,7 +124,7 @@ def load(
 
         next_byte = file.read(1)
         if next_byte == b"":
-            raise RuntimeError("Unsupported image format {!r}".format(magic_number))
+            raise RuntimeError(f"Unsupported image format {magic_number!r}")
         if next_byte == b"#":  # comment found, seek until a newline or EOF is found
             while file.read(1) not in [b"", b"\n"]:  # EOF or NL
                 pass

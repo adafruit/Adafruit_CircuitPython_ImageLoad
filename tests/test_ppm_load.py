@@ -26,11 +26,14 @@
 * Author(s):  Matt Land
 
 """
+
 import os
 from io import BytesIO
 from unittest import TestCase
+
 from adafruit_imageload import pnm
 from adafruit_imageload.pnm.ppm_ascii import read_three_colors
+
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 

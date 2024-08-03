@@ -8,6 +8,7 @@ Basic JPG imageload example
 
 import board
 import displayio
+
 import adafruit_imageload
 
 group = displayio.Group()

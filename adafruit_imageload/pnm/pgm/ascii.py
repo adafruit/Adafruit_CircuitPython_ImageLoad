@@ -14,11 +14,14 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
+
 try:
-    from typing import Tuple, Set, Optional
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ...displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import Optional, Set, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from ...displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -66,9 +69,7 @@ def load(
     return bitmap_obj, palette_obj
 
 
-def build_palette(
-    palette_class: PaletteConstructor, palette_colors: Set[int]
-) -> Palette:  # pylint: disable=duplicate-code
+def build_palette(palette_class: PaletteConstructor, palette_colors: Set[int]) -> Palette:
     """
     construct the Palette, and populate it with the set of palette_colors
     """

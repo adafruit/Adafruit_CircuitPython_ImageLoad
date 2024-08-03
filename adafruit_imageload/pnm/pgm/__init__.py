@@ -14,12 +14,14 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Matt Land, Brooke Storm, Sam McGahan
 
 """
-# pylint: disable=import-outside-toplevel
+
 try:
-    from typing import Tuple, Optional, Set, List
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ...displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import List, Optional, Set, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from ...displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -30,7 +32,7 @@ def load(
     header: List[int],
     *,
     bitmap: Optional[BitmapConstructor] = None,
-    palette: Optional[PaletteConstructor] = None
+    palette: Optional[PaletteConstructor] = None,
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """
     Perform the load of Netpbm greyscale images (P2, P5)
