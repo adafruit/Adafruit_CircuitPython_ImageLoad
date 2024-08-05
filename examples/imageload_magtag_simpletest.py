@@ -5,9 +5,12 @@
 Basic imageload example script
 adapted for use on MagTag.
 """
+
 import time
+
 import board
 import displayio
+
 import adafruit_imageload
 
 # use built in display (PyPortal, PyGamer, PyBadge, CLUE, etc.)

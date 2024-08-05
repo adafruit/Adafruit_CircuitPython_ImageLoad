@@ -21,7 +21,8 @@ except ImportError:
 
 try:
     from io import BufferedReader
-    from typing import Tuple, Optional
+    from typing import Optional, Tuple
+
     from .displayio_types import BitmapConstructor
 except ImportError:
     pass

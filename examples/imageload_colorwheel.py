@@ -3,6 +3,7 @@
 
 import board
 import displayio
+
 import adafruit_imageload
 
 display = board.DISPLAY

@@ -17,9 +17,10 @@ return None for pallet.
 """
 
 try:
-    from typing import Tuple, Optional
     from io import BufferedReader
-    from displayio import Palette, Bitmap
+    from typing import Optional, Tuple
+
+    from displayio import Bitmap, Palette
 except ImportError:
     pass
 

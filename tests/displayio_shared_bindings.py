@@ -34,6 +34,7 @@ Code that can be run successfully against these classes will have a good chance 
 * Author(s):  Matt Land
 
 """
+
 from typing import Union
 
 
@@ -76,9 +77,7 @@ class Bitmap_C_Interface:
         if value > 255:
             raise ValueError(f"pixel value {value} too large")
         if self.data.get(key):
-            raise ValueError(
-                f"pixel {self._decode(key)}/{key} already set, cannot set again"
-            )
+            raise ValueError(f"pixel {self._decode(key)}/{key} already set, cannot set again")
         self.data[key] = value
 
     def __getitem__(self, item: Union[tuple, int]) -> bytearray:
@@ -89,9 +88,7 @@ class Bitmap_C_Interface:
         try:
             return self.data[item]
         except KeyError as err:
-            raise RuntimeError(
-                "no data at {} [{}]".format(self._decode(item), item)
-            ) from err
+            raise RuntimeError(f"no data at {self._decode(item)} [{item}]") from err
 
     def validate(self, detect_empty_image=True) -> None:
         """
@@ -160,9 +157,7 @@ class Palette_C_Interface:
         if isinstance(value, int) and value > 0xFFFFFF:
             raise ValueError(f"palette color int {value} is too large")
         if self.colors.get(key):
-            raise ValueError(
-                f"palette color {key} was already set, should not reassign"
-            )
+            raise ValueError(f"palette color {key} was already set, should not reassign")
         self.colors[key] = value
 
     def __getitem__(self, item: int) -> Union[bytes, int, bytearray]:
@@ -171,9 +166,7 @@ class Palette_C_Interface:
         It is provided here for debugging purposes.
         """
         if item >= self.num_colors:
-            raise ValueError(
-                f"palette index {item} should be less than {self.num_colors}"
-            )
+            raise ValueError(f"palette index {item} should be less than {self.num_colors}")
         if not self.colors.get(item):
             raise ValueError(f"palette index {item} is not set")
         return self.colors[item]
@@ -186,17 +179,14 @@ class Palette_C_Interface:
             raise IndexError("no palette colors were set")
         if len(self.colors) != self.num_colors:
             raise IndexError(
-                "palette was initialized for {} colors, but only {} were inserted".format(
-                    self.num_colors, len(self.colors)
-                )
+                f"palette was initialized for {self.num_colors} "
+                f"colors, but only {len(self.colors)} were inserted"
             )
         for i in range(self.num_colors):
             try:
                 self.colors
             except IndexError as err:
-                raise ValueError(
-                    "missing color `{}` in palette color list".format(i)
-                ) from err
+                raise ValueError(f"missing color `{i}` in palette color list") from err
 
     def __str__(self):
         """

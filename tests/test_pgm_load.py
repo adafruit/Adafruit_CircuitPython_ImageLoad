@@ -26,9 +26,12 @@
 * Author(s):  Matt Land
 
 """
+
 import os
 from unittest import TestCase
+
 from adafruit_imageload import pnm
+
 from .displayio_shared_bindings import Bitmap_C_Interface, Palette_C_Interface
 
 

@@ -20,16 +20,18 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 try:
-    from typing import (
-        Tuple,
-        Iterator,
-        Optional,
-        List,
-        Set,
-    )
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import (
+        Iterator,
+        List,
+        Optional,
+        Set,
+        Tuple,
+    )
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 

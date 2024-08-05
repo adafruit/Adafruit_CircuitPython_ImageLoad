@@ -3,6 +3,7 @@
 
 import board
 import displayio
+
 import adafruit_imageload
 from adafruit_imageload.tilegrid_inflator import inflate_tilegrid
 

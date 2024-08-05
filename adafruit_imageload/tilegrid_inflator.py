@@ -13,12 +13,15 @@ columns as many times as needed to reach a target size.
 * Author(s): Tim Cocks, Matt Land
 
 """
+
 import displayio
+
 import adafruit_imageload
 
 try:
-    from typing import Tuple, Optional, List, Union
-    from displayio import Palette, Bitmap, OnDiskBitmap, TileGrid
+    from typing import List, Optional, Tuple, Union
+
+    from displayio import Bitmap, OnDiskBitmap, Palette, TileGrid
 except ImportError:
     pass
 
@@ -26,7 +29,7 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def inflate_tilegrid(
+def inflate_tilegrid(  # noqa: PLR0913, PLR0912, Too many arguments in function definition, Too many branches
     bmp_path: Optional[str] = None,
     target_size: Tuple[int, int] = (3, 3),
     tile_size: Optional[List[int]] = None,
@@ -47,8 +50,6 @@ def inflate_tilegrid(
     :param Optional[OnDiskBitmap] bmp_obj: Already loaded 3x3 spritesheet in an OnDiskBitmap
     :param Optional[Palette] bmp_palette: Already loaded spritesheet Palette
     """
-
-    # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
 
     if bmp_path is None and (bmp_obj is None and bmp_palette is None):
         raise AttributeError("Must pass either bmp_path or bmp_obj and bmp_palette")
