@@ -124,7 +124,8 @@ def load(  # noqa: PLR0912 Too many branches
 
         next_byte = file.read(1)
         if next_byte == b"":
-            raise RuntimeError(f"Unsupported image format {magic_number!r}")
+            # mpy-cross does not support !r in f-string substitution, so ignore ruff rule
+            raise RuntimeError("Unsupported image format {!r}".format(magic_number))  # noqa: UP032, f-string
         if next_byte == b"#":  # comment found, seek until a newline or EOF is found
             while file.read(1) not in [b"", b"\n"]:  # EOF or NL
                 pass
