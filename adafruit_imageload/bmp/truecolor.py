@@ -16,13 +16,14 @@ Load pixel colors into a bitmap from an truecolor BMP and return the correct col
 import sys
 
 try:
-    from typing import Union, Optional, Tuple
     from io import BufferedReader
+    from typing import Optional, Tuple, Union
+
     from ..displayio_types import BitmapConstructor
 except ImportError:
     pass
 
-from displayio import ColorConverter, Colorspace, Bitmap
+from displayio import Bitmap, ColorConverter, Colorspace
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
@@ -52,7 +53,7 @@ def bitfield_format(bitfield_mask):
     return None
 
 
-def load(
+def load(  # noqa: PLR0912, PLR0913, Too many branches, Too many arguments in function definition
     file: BufferedReader,
     width: int,
     height: int,
@@ -73,7 +74,6 @@ def load(
     :param dict bitfield_masks: The bitfield masks for each color if using bitfield compression
     :param BitmapConstructor bitmap: a function that returns a displayio.Bitmap
     """
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     converter_obj = None
     bitmap_obj = None
     if bitmap:
@@ -90,7 +90,6 @@ def load(
             input_colorspace = Colorspace.RGB555
         converter_obj = ColorConverter(input_colorspace=input_colorspace)
         if sys.maxsize > 1073741823:
-            # pylint: disable=import-outside-toplevel, relative-beyond-top-level
             from .negative_height_check import negative_height_check
 
             # convert unsigned int to signed int when height is negative
@@ -119,19 +118,14 @@ def load(
                     color = 0
                     for byte in range(bytes_per_pixel):
                         color |= chunk[i + byte] << (8 * byte)
-                    mask = (
-                        bitfield_masks["red"]
-                        | bitfield_masks["green"]
-                        | bitfield_masks["blue"]
-                    )
+                    mask = bitfield_masks["red"] | bitfield_masks["green"] | bitfield_masks["blue"]
                     if color_depth in (24, 32):
                         mask = mask >> 8
                     pixel = color & mask
+                elif color_depth == 16:
+                    pixel = chunk[i] | chunk[i + 1] << 8
                 else:
-                    if color_depth == 16:
-                        pixel = chunk[i] | chunk[i + 1] << 8
-                    else:
-                        pixel = chunk[i + 2] << 16 | chunk[i + 1] << 8 | chunk[i]
+                    pixel = chunk[i + 2] << 16 | chunk[i + 1] << 8 | chunk[i]
                 bitmap_obj[offset + x] = converter_obj.convert(pixel)
 
     return bitmap_obj, ColorConverter(input_colorspace=Colorspace.RGB565)

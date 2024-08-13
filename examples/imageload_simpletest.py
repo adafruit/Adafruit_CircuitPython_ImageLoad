@@ -3,6 +3,7 @@
 
 import board
 import displayio
+
 import adafruit_imageload
 
 image, palette = adafruit_imageload.load("images/4bit.bmp")

@@ -12,9 +12,10 @@ Tested with Feather M4 Express and 2.4" Featherwing
 
 """
 
+import adafruit_ili9341
 import board
 import displayio
-import adafruit_ili9341
+
 import adafruit_imageload
 
 spi = board.SPI()
@@ -36,9 +37,7 @@ display.root_group = splash
 # image = "images/netpbm_p5_binary.pgm"
 image = "images/netpbm_p6_binary.ppm"
 
-bitmap, palette = adafruit_imageload.load(
-    image, bitmap=displayio.Bitmap, palette=displayio.Palette
-)
+bitmap, palette = adafruit_imageload.load(image, bitmap=displayio.Bitmap, palette=displayio.Palette)
 
 
 bg_sprite = displayio.TileGrid(bitmap, pixel_shader=palette, x=0, y=0)

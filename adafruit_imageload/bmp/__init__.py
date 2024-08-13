@@ -12,13 +12,14 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 * Author(s): Scott Shawcroft, Matt Land
 
 """
-# pylint: disable=import-outside-toplevel
 
 try:
-    from typing import Tuple, Optional, Set, List
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import List, Optional, Set, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -30,7 +31,7 @@ def load(
     file: BufferedReader,
     *,
     bitmap: Optional[BitmapConstructor] = None,
-    palette: Optional[PaletteConstructor] = None
+    palette: Optional[PaletteConstructor] = None,
 ) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """Loads a bmp image from the open ``file``.
 

@@ -18,8 +18,10 @@ from a PNG file.
 try:
     from io import BufferedReader
     from typing import Optional, Tuple
-    from displayio import Palette, Bitmap
-    from .displayio_types import PaletteConstructor, BitmapConstructor
+
+    from displayio import Bitmap, Palette
+
+    from .displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -30,11 +32,8 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(
-    file: BufferedReader,
-    *,
-    bitmap: BitmapConstructor,
-    palette: Optional[PaletteConstructor] = None
+def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
+    file: BufferedReader, *, bitmap: BitmapConstructor, palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """
     Loads a PNG image from the open ``file``.
@@ -49,7 +48,6 @@ def load(
     :param object palette: Type to store the palette. Must have API similar to
       `displayio.Palette`. Will be skipped if None.
     """
-    # pylint: disable=too-many-locals, too-many-branches, consider-using-enumerate, too-many-statements, import-outside-toplevel, invalid-name
     header = file.read(8)
     if header != b"\x89PNG\r\n\x1a\n":
         raise ValueError("Not a PNG file")
@@ -119,9 +117,9 @@ def load(
                 for x in range(0, width, pixels_per_byte):
                     byte = data_bytes[src]
                     for pixel in range(pixels_per_byte):
-                        bmp[x + pixel, y] = (
-                            byte >> ((pixels_per_byte - pixel - 1) * depth)
-                        ) & ((1 << depth) - 1)
+                        bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
+                            (1 << depth) - 1
+                        )
                     src += 1
             else:
                 mem[dst : dst + scanline] = data_bytes[src : src + scanline]
@@ -184,9 +182,7 @@ def load(
         elif mode in {2, 6}:  # rgb
             for x in range(width):
                 bmp[x, y] = pal.convert(
-                    (line[x * unit + 0] << 16)
-                    | (line[x * unit + 1] << 8)
-                    | line[x * unit + 2]
+                    (line[x * unit + 0] << 16) | (line[x * unit + 1] << 8) | line[x * unit + 2]
                 )
         else:
             raise ValueError("Unsupported color mode.")

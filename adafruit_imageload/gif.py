@@ -17,10 +17,12 @@ from a GIF file.
 import struct
 
 try:
-    from typing import Tuple, Iterator, Optional, List
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from .displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import Iterator, List, Optional, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from .displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
@@ -29,10 +31,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(
-    file: BufferedReader,
-    *,
-    bitmap: BitmapConstructor,
-    palette: Optional[PaletteConstructor] = None
+    file: BufferedReader, *, bitmap: BitmapConstructor, palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads a GIF image from the open ``file``.
 
@@ -47,9 +46,7 @@ def load(
     header = file.read(6)
     if header not in {b"GIF87a", b"GIF89a"}:
         raise ValueError("Not a GIF file")
-    width, height, flags, _, _ = struct.unpack(  # pylint: disable=no-member
-        "<HHBBB", file.read(7)
-    )
+    width, height, flags, _, _ = struct.unpack("<HHBBB", file.read(7))
     if (flags & 0x80) != 0:
         if not palette:
             raise RuntimeError("palette argument required")
@@ -78,9 +75,7 @@ def load(
 
 def _read_frame(file: BufferedReader, bitmap: Bitmap) -> None:
     """Read a single frame and apply it to the bitmap."""
-    ddx, ddy, width, _, flags = struct.unpack(  # pylint: disable=no-member
-        "<HHHHB", file.read(9)
-    )
+    ddx, ddy, width, _, flags = struct.unpack("<HHHHB", file.read(9))
     if (flags & 0x40) != 0:
         raise NotImplementedError("Interlacing not supported")
     if (flags & 0x80) != 0:
@@ -145,10 +140,7 @@ class LZWDict:
             value = self.last + self.last[0:1]
         if self.last:
             self.codes.append(self.last + value[0:1])
-        if (
-            len(self.codes) + self.end_code + 1 >= 1 << self.code_len
-            and self.code_len < 12
-        ):
+        if len(self.codes) + self.end_code + 1 >= 1 << self.code_len and self.code_len < 12:
             self.code_len += 1
         self.last = value
         return value
@@ -159,7 +151,7 @@ def lzw_decode(data: Iterator[int], code_size: int) -> Iterator[bytes]:
     dictionary = LZWDict(code_size)
     bit = 0
     try:
-        byte = next(data)  # pylint: disable=stop-iteration-return
+        byte = next(data)
         try:
             while True:
                 code = 0
@@ -168,10 +160,10 @@ def lzw_decode(data: Iterator[int], code_size: int) -> Iterator[bytes]:
                     bit += 1
                     if bit >= 8:
                         bit = 0
-                        byte = next(data)  # pylint: disable=stop-iteration-return
+                        byte = next(data)
                 yield dictionary.decode(code)
         except EndOfData:
             while True:
-                next(data)  # pylint: disable=stop-iteration-return
+                next(data)
     except StopIteration:
         pass

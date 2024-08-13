@@ -28,7 +28,9 @@ These tests are to validate the displayio_shared_bindings classes that other tes
 * Author(s):  Matt Land
 
 """
+
 from unittest import TestCase
+
 from .displayio_shared_bindings import Bitmap_C_Interface
 
 
@@ -41,7 +43,7 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_abs(self):
         b = Bitmap_C_Interface(5, 2, 1)
-        self.assertEqual(9, b._abs_pos(4, 1))  # pylint: disable=protected-access
+        self.assertEqual(9, b._abs_pos(4, 1))
 
     def test_set_tuple(self):
         b = Bitmap_C_Interface(2, 4, 1)
@@ -76,7 +78,7 @@ class TestBitmap_C_Interface(TestCase):
     def test_uninitialized(self):
         b = Bitmap_C_Interface(2, 4, 1)
         with self.assertRaises(RuntimeError):
-            b[1, 1]  # pylint: disable=pointless-statement
+            b[1, 1]
 
     def test_validate_throws(self):
         b = Bitmap_C_Interface(2, 4, 1)
@@ -95,6 +97,6 @@ class TestBitmap_C_Interface(TestCase):
 
     def test_decode(self):
         b = Bitmap_C_Interface(4, 4, 1)
-        self.assertEqual((0, 0), b._decode(0))  # pylint: disable=protected-access
-        encoded = b._abs_pos(3, 3)  # pylint: disable=protected-access
-        self.assertEqual((3, 3), b._decode(encoded))  # pylint: disable=protected-access
+        self.assertEqual((0, 0), b._decode(0))
+        encoded = b._abs_pos(3, 3)
+        self.assertEqual((3, 3), b._decode(encoded))

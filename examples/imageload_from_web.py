@@ -4,14 +4,16 @@
 imageload example for esp32s2 that loads an image fetched via
 adafruit_requests using BytesIO
 """
-from io import BytesIO
-import ssl
-import wifi
-import socketpool
 
+import ssl
+from io import BytesIO
+
+import adafruit_requests as requests
 import board
 import displayio
-import adafruit_requests as requests
+import socketpool
+import wifi
+
 import adafruit_imageload
 
 # Get wifi details and more from a secrets.py file
@@ -28,7 +30,6 @@ print("My IP address is", wifi.radio.ipv4_address)
 socket = socketpool.SocketPool(wifi.radio)
 https = requests.Session(socket, ssl.create_default_context())
 
-# pylint: disable=line-too-long
 url = "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_ImageLoad/main/examples/images/4bit.bmp"
 
 print("Fetching text from %s" % url)

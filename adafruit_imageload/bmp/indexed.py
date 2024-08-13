@@ -13,28 +13,29 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 
 """
 
-
 import sys
 
 try:
-    from typing import Tuple, Optional
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import Optional, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
 try:
     from bitmaptools import readinto as _bitmap_readinto
 except ImportError:
-    _bitmap_readinto = None  # pylint: disable=invalid-name  # type: Callable
+    _bitmap_readinto = None
 
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
-def load(
+def load(  # noqa:  PLR0913, PLR0912, Too many arguments in function definition, Too many branches
     file: BufferedReader,
     width: int,
     height: int,
@@ -58,7 +59,6 @@ def load(
     :param BitmapConstructor bitmap: a function that returns a displayio.Bitmap
     :param PaletteConstructor palette: a function that returns a displayio.Palette
     """
-    # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     palette_obj = None
     if palette:
         palette_obj = palette(colors)
@@ -78,7 +78,6 @@ def load(
             minimum_color_depth *= 2
 
         if sys.maxsize > 1073741823:
-            # pylint: disable=import-outside-toplevel, relative-beyond-top-level
             from .negative_height_check import negative_height_check
 
             # convert unsigned int to signed int when height is negative
@@ -121,9 +120,7 @@ def load(
 
                     for x in range(width):
                         i = x // pixels_per_byte
-                        pixel = (
-                            chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))
-                        ) & mask
+                        pixel = (chunk[i] >> (8 - color_depth * (x % pixels_per_byte + 1))) & mask
                         bitmap_obj[offset + x] = pixel
         elif compression in (1, 2):
             decode_rle(
@@ -137,7 +134,7 @@ def load(
     return bitmap_obj, palette_obj
 
 
-def decode_rle(
+def decode_rle(  # noqa: PLR0912 Too many branches
     bitmap: Bitmap,
     file: BufferedReader,
     compression: int,
@@ -145,7 +142,6 @@ def decode_rle(
     width: int,
 ) -> None:
     """Helper to decode RLE images"""
-    # pylint: disable=too-many-locals,too-many-nested-blocks,too-many-branches
 
     # RLE algorithm, either 8-bit (1) or 4-bit (2)
     #
