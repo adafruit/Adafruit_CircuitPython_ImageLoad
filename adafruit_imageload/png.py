@@ -109,7 +109,7 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         mem = memoryview(bmp)
         for y in range(height):
             # Adjust for Displayio.Bitmap filler to scanline at byte boundry
-            filladj = (y * ((4 - (width % 4)) % 4))
+            filladj = y * ((4 - (width % 4)) % 4)
             dst = y * scanline + filladj
             src = y * (scanline + 1) + 1
             if depth < 5:
