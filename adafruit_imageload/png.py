@@ -110,9 +110,11 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         for y in range(height):
             dst = y * scanline
             src = y * (scanline + 1) + 1
-            if depth < 8 or (depth == 8 and width % 4 != 0):
-                # Work around the bug in displayio.Bitmap
+            if width % 4 != 0:
+                # Work around the bugs in displayio.Bitmap
+                # The first should have been resolved by #9479
                 # https://github.com/adafruit/circuitpython/issues/6675
+                # https://github.com/adafruit/circuitpython/issues/9707
                 pixels_per_byte = 8 // depth
                 for x in range(0, width, pixels_per_byte):
                     byte = data_bytes[src]
