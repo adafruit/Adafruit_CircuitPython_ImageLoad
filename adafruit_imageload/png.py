@@ -108,9 +108,11 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         bmp = bitmap(width, height, colors)
         mem = memoryview(bmp)
         for y in range(height):
-            dst = y * scanline
+            # Adjust for Displayio.Bitmap filler to scanline at byte boundry
+            filladj = (y * ((4 - (width % 4)) % 4))
+            dst = y * scanline + filladj
             src = y * (scanline + 1) + 1
-            if depth < 5 or width % 4 != 0:
+            if depth < 5:
                 # Work around the bugs in displayio.Bitmap
                 # The first should have been resolved by #9479
                 # https://github.com/adafruit/circuitpython/issues/6675
