@@ -122,7 +122,7 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
             workaround = False
 
         for y in range(height):
-            if (workaround):
+            if workaround:
                 # Work around the bug in displayio.Bitmap
                 # remove once CircuitPython 9.1 is no longer supported
                 # https://github.com/adafruit/circuitpython/issues/6675
