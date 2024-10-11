@@ -117,9 +117,9 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
             # remove once CircuitPython 9.1 is no longer supported
             # https://github.com/adafruit/circuitpython/issues/6675
             # https://github.com/adafruit/circuitpython/issues/9707
-            if ((implementation[1][0] == 9 and implementation[1][1] < 2) or
-                implementation[1][0] < 9) and (depth < 8 or width % 4 != 0):
-            
+            if (
+                (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
+            ) and (depth < 8 or width % 4 != 0):
                 pixels_per_byte = 8 // depth
                 for x in range(0, width, pixels_per_byte):
                     byte = data_bytes[src]
