@@ -25,6 +25,7 @@ try:
 except ImportError:
     pass
 
+from sys import implementation
 import struct
 import zlib
 
@@ -112,22 +113,23 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
             filladj = y * ((4 - (scanline % 4)) % 4)
             dst = y * scanline + filladj
             src = y * (scanline + 1) + 1
-            # Work around the bug in displayio.Bitmap - removed afer resolution
-            # however left here as comments because it's helpful in
-            # understanding the memoryview scanline and adjustment calculations
+            # Work around the bug in displayio.Bitmap
+            # remove once CircuitPython 9.1 is no longer supported
             # https://github.com/adafruit/circuitpython/issues/6675
             # https://github.com/adafruit/circuitpython/issues/9707
-            #
-            #    pixels_per_byte = 8 // depth
-            #    for x in range(0, width, pixels_per_byte):
-            #        byte = data_bytes[src]
-            #        for pixel in range(pixels_per_byte):
-            #            bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
-            #                (1 << depth) - 1
-            #            )
-            #        src += 1
-            #
-            mem[dst : dst + scanline] = data_bytes[src : src + scanline]
+            if ((implementation[1][0] == 9 and implementation[1][1] < 2) or
+                implementation[1][0] < 9) and (depth < 8 or width % 4 != 0):
+            
+                pixels_per_byte = 8 // depth
+                for x in range(0, width, pixels_per_byte):
+                    byte = data_bytes[src]
+                    for pixel in range(pixels_per_byte):
+                        bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
+                            (1 << depth) - 1
+                        )
+                    src += 1
+            else:
+                mem[dst : dst + scanline] = data_bytes[src : src + scanline]
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
