@@ -108,8 +108,13 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
     if mode == 3:  # indexed
         bmp = bitmap(width, height, colors)
         mem = memoryview(bmp)
+        pixels_per_byte = 8 // depth
+        # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
+        filladj = (4 - (scanline % 4)) % 4
+        dst = 0
+        src = 1
+        src_b = 1
         for y in range(height):
-            src = y * (scanline + 1) + 1
             if (
                 (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
             ) and (depth < 8 or width % 4 != 0):
@@ -117,19 +122,18 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                 # remove once CircuitPython 9.1 is no longer supported
                 # https://github.com/adafruit/circuitpython/issues/6675
                 # https://github.com/adafruit/circuitpython/issues/9707
-                pixels_per_byte = 8 // depth
                 for x in range(0, width, pixels_per_byte):
-                    byte = data_bytes[src]
+                    byte = data_bytes[src_b]
                     for pixel in range(pixels_per_byte):
                         bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
                             (1 << depth) - 1
                         )
-                    src += 1
+                    src_b += 1
             else:
-                # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
-                filladj = y * ((4 - (scanline % 4)) % 4)
-                dst = y * scanline + filladj
                 mem[dst : dst + scanline] = data_bytes[src : src + scanline]
+                dst += scanline + filladj
+            src += scanline + 1
+            src_b = src
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
