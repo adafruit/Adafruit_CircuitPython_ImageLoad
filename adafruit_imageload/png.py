@@ -109,9 +109,6 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         bmp = bitmap(width, height, colors)
         mem = memoryview(bmp)
         for y in range(height):
-            # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
-            filladj = y * ((4 - (scanline % 4)) % 4)
-            dst = y * scanline + filladj
             src = y * (scanline + 1) + 1
             if (
                 (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
@@ -129,6 +126,9 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                         )
                     src += 1
             else:
+                # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
+                filladj = y * ((4 - (scanline % 4)) % 4)
+                dst = y * scanline + filladj
                 mem[dst : dst + scanline] = data_bytes[src : src + scanline]
         return bmp, pal
     # RGB, RGBA or Grayscale
