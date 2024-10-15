@@ -111,18 +111,12 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         pixels_per_byte = 8 // depth
         # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
         filladj = (4 - (scanline % 4)) % 4
-        dst = 0
         src = 1
-        src_b = 1
         if (
             (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
         ) and (depth < 8 or width % 4 != 0):
-            workaround = True
-        else:
-            workaround = False
-
-        for y in range(height):
-            if workaround:
+            src_b = 1
+            for y in range(height):
                 # Work around the bug in displayio.Bitmap
                 # remove once CircuitPython 9.1 is no longer supported
                 # https://github.com/adafruit/circuitpython/issues/6675
@@ -134,11 +128,14 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                             (1 << depth) - 1
                         )
                     src_b += 1
-            else:
+                src += scanline + 1
+                src_b = src
+        else:
+            dst = 0
+            for y in range(height):
                 mem[dst : dst + scanline] = data_bytes[src : src + scanline]
                 dst += scanline + filladj
-            src += scanline + 1
-            src_b = src
+                src += scanline + 1
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
