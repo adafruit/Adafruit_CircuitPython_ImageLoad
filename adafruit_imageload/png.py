@@ -27,7 +27,6 @@ except ImportError:
 
 import struct
 import zlib
-from sys import implementation
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
