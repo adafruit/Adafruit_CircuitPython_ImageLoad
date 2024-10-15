@@ -107,8 +107,6 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
     if mode == 3:  # indexed
         bmp = bitmap(width, height, 1 << depth)
         pixels_per_byte = 8 // depth
-        # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
-        filladj = (4 - (scanline % 4)) % 4
         src = 1
         src_b = 1
         pixmask = (1 << depth) - 1
