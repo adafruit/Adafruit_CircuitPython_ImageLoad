@@ -104,38 +104,22 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
     data_bytes = zlib.decompress(data)
     unit = (1, 0, 3, 1, 2, 0, 4)[mode]
     scanline = (width * depth * unit + 7) // 8
-    colors = 1 << (depth * unit)
     if mode == 3:  # indexed
-        bmp = bitmap(width, height, colors)
-        mem = memoryview(bmp)
+        bmp = bitmap(width, height, 1 << depth)
         pixels_per_byte = 8 // depth
         # Adjust for Displayio.Bitmap filler to scanline at 4-byte boundry
         filladj = (4 - (scanline % 4)) % 4
         src = 1
-        if (
-            (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
-        ) and (depth < 8 or width % 4 != 0):
-            # Work around the bug in displayio.Bitmap
-            # remove once CircuitPython 9.1 is no longer supported
-            # https://github.com/adafruit/circuitpython/issues/6675
-            # https://github.com/adafruit/circuitpython/issues/9707
-            src_b = 1
-            for y in range(height):
-                for x in range(0, width, pixels_per_byte):
-                    byte = data_bytes[src_b]
-                    for pixel in range(pixels_per_byte):
-                        bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
-                            (1 << depth) - 1
-                        )
-                    src_b += 1
-                src += scanline + 1
-                src_b = src
-        else:
-            dst = 0
-            for y in range(height):
-                mem[dst : dst + scanline] = data_bytes[src : src + scanline]
-                dst += scanline + filladj
-                src += scanline + 1
+        src_b = 1
+        pixmask = (1 << depth) - 1
+        for y in range(height):
+            for x in range(0, width, pixels_per_byte):
+                byte = data_bytes[src_b]
+                for pixel in range(pixels_per_byte):
+                    bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & pixmask
+                src_b += 1
+            src += scanline + 1
+            src_b = src
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
