@@ -115,12 +115,12 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
         if (
             (implementation[1][0] == 9 and implementation[1][1] < 2) or implementation[1][0] < 9
         ) and (depth < 8 or width % 4 != 0):
+            # Work around the bug in displayio.Bitmap
+            # remove once CircuitPython 9.1 is no longer supported
+            # https://github.com/adafruit/circuitpython/issues/6675
+            # https://github.com/adafruit/circuitpython/issues/9707
             src_b = 1
             for y in range(height):
-                # Work around the bug in displayio.Bitmap
-                # remove once CircuitPython 9.1 is no longer supported
-                # https://github.com/adafruit/circuitpython/issues/6675
-                # https://github.com/adafruit/circuitpython/issues/9707
                 for x in range(0, width, pixels_per_byte):
                     byte = data_bytes[src_b]
                     for pixel in range(pixels_per_byte):
