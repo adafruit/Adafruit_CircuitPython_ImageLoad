@@ -103,26 +103,20 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
     data_bytes = zlib.decompress(data)
     unit = (1, 0, 3, 1, 2, 0, 4)[mode]
     scanline = (width * depth * unit + 7) // 8
-    colors = 1 << (depth * unit)
     if mode == 3:  # indexed
-        bmp = bitmap(width, height, colors)
-        mem = memoryview(bmp)
+        bmp = bitmap(width, height, 1 << depth)
+        pixels_per_byte = 8 // depth
+        src = 1
+        src_b = 1
+        pixmask = (1 << depth) - 1
         for y in range(height):
-            dst = y * scanline
-            src = y * (scanline + 1) + 1
-            if depth < 8:
-                # Work around the bug in displayio.Bitmap
-                # https://github.com/adafruit/circuitpython/issues/6675
-                pixels_per_byte = 8 // depth
-                for x in range(0, width, pixels_per_byte):
-                    byte = data_bytes[src]
-                    for pixel in range(pixels_per_byte):
-                        bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & (
-                            (1 << depth) - 1
-                        )
-                    src += 1
-            else:
-                mem[dst : dst + scanline] = data_bytes[src : src + scanline]
+            for x in range(0, width, pixels_per_byte):
+                byte = data_bytes[src_b]
+                for pixel in range(pixels_per_byte):
+                    bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & pixmask
+                src_b += 1
+            src += scanline + 1
+            src_b = src
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
