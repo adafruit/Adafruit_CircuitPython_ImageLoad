@@ -94,7 +94,7 @@ def load(  # noqa: PLR0912, PLR0913, Too many branches, Too many arguments in fu
 
             # convert unsigned int to signed int when height is negative
             height = negative_height_check(height)
-        bitmap_obj = Bitmap(width, abs(height), 65535)
+        bitmap_obj = bitmap(width, abs(height), 65535)
         file.seek(data_start)
         line_size = width * (color_depth // 8)
         # Set the seek direction based on whether the height value is negative or positive
