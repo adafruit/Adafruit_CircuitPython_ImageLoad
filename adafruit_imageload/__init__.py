@@ -24,7 +24,7 @@ try:
         Union,
     )
 
-    from displayio import Bitmap, Palette
+    from displayio import Bitmap, ColorConverter, Palette
 
     from .displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
@@ -39,7 +39,7 @@ def load(
     *,
     bitmap: Optional[BitmapConstructor] = None,
     palette: Optional[PaletteConstructor] = None,
-) -> Tuple[Bitmap, Optional[Palette]]:
+) -> Tuple[Bitmap, Optional[Union[Palette, ColorConverter]]]:
     """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
     bitmap is the desired type. It must take width, height and color_depth in the constructor. It
