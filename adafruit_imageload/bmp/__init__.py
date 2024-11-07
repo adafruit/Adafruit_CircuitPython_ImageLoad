@@ -35,7 +35,8 @@ def load(
 ) -> Tuple[Optional[Bitmap], Optional[Union[Palette, ColorConverter]]]:
     """Loads a bmp image from the open ``file``.
 
-    Returns tuple of bitmap object and palette object.
+    Returns tuple of `displayio.Bitmap` object and
+    `displayio.Palette` object, or `displayio.ColorConverter` object.
 
     :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
       with the data of a BMP file.
