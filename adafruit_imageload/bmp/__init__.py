@@ -15,9 +15,9 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 
 try:
     from io import BufferedReader
-    from typing import List, Optional, Set, Tuple
+    from typing import List, Optional, Set, Tuple, Union
 
-    from displayio import Bitmap, Palette
+    from displayio import Bitmap, ColorConverter, Palette
 
     from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
@@ -32,10 +32,11 @@ def load(
     *,
     bitmap: Optional[BitmapConstructor] = None,
     palette: Optional[PaletteConstructor] = None,
-) -> Tuple[Optional[Bitmap], Optional[Palette]]:
+) -> Tuple[Optional[Bitmap], Optional[Union[Palette, ColorConverter]]]:
     """Loads a bmp image from the open ``file``.
 
-    Returns tuple of bitmap object and palette object.
+    Returns tuple of `displayio.Bitmap` object and
+    `displayio.Palette` object, or `displayio.ColorConverter` object.
 
     :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
       with the data of a BMP file.
