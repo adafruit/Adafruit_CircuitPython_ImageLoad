@@ -113,7 +113,10 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
             for x in range(0, width, pixels_per_byte):
                 byte = data_bytes[src_b]
                 for pixel in range(pixels_per_byte):
-                    bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & pixmask
+                    if x + pixel < width:
+                        bmp[x + pixel, y] = (
+                            byte >> ((pixels_per_byte - pixel - 1) * depth)
+                        ) & pixmask
                 src_b += 1
             src += scanline + 1
             src_b = src
