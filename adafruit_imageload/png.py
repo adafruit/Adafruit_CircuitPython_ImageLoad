@@ -28,7 +28,7 @@ except ImportError:
 import struct
 import zlib
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -106,12 +106,48 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
     if mode == 3:  # indexed
         bmp = bitmap(width, height, 1 << depth)
         pixels_per_byte = 8 // depth
-        src = 1
-        src_b = 1
+        src = 0
         pixmask = (1 << depth) - 1
+        line = bytearray(scanline)
+        prev = bytearray(scanline)
         for y in range(height):
+            filter_ = data_bytes[src]
+            src_b = src + 1
             for x in range(0, width, pixels_per_byte):
+                # relative position on the line
+                pos = x // pixels_per_byte
                 byte = data_bytes[src_b]
+                if filter_ == 0:
+                    pass
+                elif filter_ == 1:  # sub
+                    prev_b = line[pos - unit] if pos >= unit else 0
+                    byte = (byte + prev_b) & 0xFF
+                elif filter_ == 2:  # up
+                    byte = (byte + prev[pos]) & 0xFF
+                elif filter_ == 3:  # average
+                    prev_b = line[pos - unit] if pos >= unit else 0
+                    byte = (byte + (prev_b + prev[pos]) // 2) & 0xFF
+                elif filter_ == 4:  # paeth
+                    a = line[pos - unit] if pos >= unit else 0
+                    if y > 0:
+                        b = prev[pos]
+                        c = prev[pos - unit] if pos >= unit else 0
+                    else:
+                        b = c = 0
+                    p = a + b - c
+                    pa = abs(p - a)
+                    pb = abs(p - b)
+                    pc = abs(p - c)
+                    if pa <= pb and pa <= pc:
+                        p = a
+                    elif pb <= pc:
+                        p = b
+                    else:
+                        p = c
+                    byte = (byte + p) & 0xFF
+                else:
+                    raise ValueError("Wrong filter.")
+                line[pos] = byte
                 for pixel in range(pixels_per_byte):
                     if x + pixel < width:
                         bmp[x + pixel, y] = (
@@ -119,7 +155,7 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                         ) & pixmask
                 src_b += 1
             src += scanline + 1
-            src_b = src
+            prev, line = line, prev
         return bmp, pal
     # RGB, RGBA or Grayscale
     import displayio
