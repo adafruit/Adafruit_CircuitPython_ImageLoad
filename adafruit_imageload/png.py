@@ -144,7 +144,7 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                         p = b
                     else:
                         p = c
-                    byte = (data_bytes[src] + p) & 0xFF
+                    byte = (byte + p) & 0xFF
                 else:
                     raise ValueError("Wrong filter.")
                 line[pos] = byte
