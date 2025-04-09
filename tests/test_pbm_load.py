@@ -72,7 +72,7 @@ class TestPbmLoad(TestCase):
         palette.validate()
 
     def test_load_works_p4_in_mem(self):
-        file = BytesIO(b"P4\n4 2\n\x55")
+        file = BytesIO(b"P4\n4 2\n\x5f\x5f")
         bitmap, palette = pnm.load(
             file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
         )
@@ -101,6 +101,27 @@ class TestPbmLoad(TestCase):
         self.assertEqual(1, bitmap.colors)
         self.assertEqual(32, bitmap.width)
         self.assertEqual(15, bitmap.height)
+        bitmap.validate()
+
+    def test_load_works_p4_binary_padded_width(self):
+        test_file = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "examples",
+            "images",
+            "netpbm_p4_mono_width.pbm",
+        )
+        with open(test_file, "rb") as file:
+            bitmap, palette = pnm.load(
+                file, b"P4", bitmap=Bitmap_C_Interface, palette=Palette_C_Interface
+            )
+        self.assertEqual(1, palette.num_colors)
+        palette.validate()
+        self.assertEqual(b"\xff\xff\xff", palette[0])
+        self.assertTrue(isinstance(bitmap, Bitmap_C_Interface))
+        self.assertEqual(1, bitmap.colors)
+        self.assertEqual(14, bitmap.width)
+        self.assertEqual(20, bitmap.height)
         bitmap.validate()
 
     def test_load_works_p4_binary_high_res(self):
