@@ -50,6 +50,13 @@ class Bitmap_C_Interface:
         self.height = height
         self.colors = colors
         self.data = {}
+        bits = 1
+        while (colors - 1) >> bits:
+            if bits < 8:
+                bits = bits << 1
+            else:
+                bits += 8
+        self._bits_per_value = bits
 
     def _abs_pos(self, width: int, height: int) -> int:
         if height >= self.height:
