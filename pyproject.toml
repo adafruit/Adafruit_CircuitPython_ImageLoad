@@ -45,7 +45,11 @@ classifiers = [
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
-packages = ["adafruit_imageload"]
+packages = [
+    "adafruit_imageload",
+    "adafruit_imageload.bmp",
+    "adafruit_imageload.png",
+]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
