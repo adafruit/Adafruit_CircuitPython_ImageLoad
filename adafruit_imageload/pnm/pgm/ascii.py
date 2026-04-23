@@ -45,7 +45,7 @@ def load(
         if byte == b"":
             break
         if not byte.isdigit():
-            int_pixel = int("".join(["%c" % char for char in pixel]))
+            int_pixel = int("".join([chr(char) for char in pixel]))
             _palette_colors.add(int_pixel)
             pixel = bytearray()
         pixel += byte
@@ -64,7 +64,7 @@ def load(
                     if not byte.isdigit():
                         break
                     pixel += byte
-                int_pixel = int("".join(["%c" % char for char in pixel]))
+                int_pixel = int("".join([chr(char) for char in pixel]))
                 bitmap_obj[x, y] = list(_palette_colors).index(int_pixel)
     return bitmap_obj, palette_obj
 

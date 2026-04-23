@@ -132,7 +132,7 @@ def load(  # noqa: PLR0912 Too many branches
         elif not next_byte.isdigit():  # boundary found in header data
             if next_value:
                 # pull values until space is found
-                pnm_header.append(int("".join(["%c" % char for char in next_value])))
+                pnm_header.append(int("".join([chr(char) for char in next_value])))
                 next_value = bytearray()  # reset the byte array
         else:
             next_value += next_byte  # push the digit into the byte array

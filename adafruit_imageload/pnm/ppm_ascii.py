@@ -88,7 +88,7 @@ def read_three_colors(file: BufferedReader) -> Iterator[bytes]:
             color += this_byte
         # not a digit means we completed one number (found a space separator or EOF)
         elif color or (triplet and this_byte == b""):
-            triplet.append(int("".join(["%c" % char for char in color])))
+            triplet.append(int("".join([chr(char) for char in color])))
             color = bytearray()
         if len(triplet) == 3:  # completed one pixel
             yield bytes(tuple(triplet))
