@@ -28,6 +28,10 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
+def dummy_func():
+    """Dummy function implementation."""
+
+
 def load(
     file: BufferedReader,
     width: int,
