@@ -81,8 +81,12 @@ class Bitmap_C_Interface:
             return
         if not isinstance(value, (int)):
             raise RuntimeError(f"set value as int, not {type(value)}")
-        if value > 255:
-            raise ValueError(f"pixel value {value} too large")
+        # Cap at the wider of the legacy 8-bit limit (kept for backward
+        # compatibility with existing indexed-bitmap tests) or the
+        # bitmap's bits_per_value (needed for 16-bit truecolor bitmaps).
+        max_value = max(255, (1 << self._bits_per_value) - 1)
+        if value > max_value:
+            raise ValueError(f"pixel value {value} too large for {self._bits_per_value}-bit bitmap")
         if self.data.get(key):
             raise ValueError(f"pixel {self._decode(key)}/{key} already set, cannot set again")
         self.data[key] = value
