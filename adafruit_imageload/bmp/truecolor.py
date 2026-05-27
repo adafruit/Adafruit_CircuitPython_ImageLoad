@@ -97,6 +97,10 @@ def load(  # noqa: PLR0912, PLR0913, Too many branches, Too many arguments in fu
         bitmap_obj = bitmap(width, abs(height), 65535)
         file.seek(data_start)
         line_size = width * (color_depth // 8)
+        # BMP scan lines are padded to a 4-byte boundary on disk; account
+        # for that padding so subsequent row reads stay aligned.
+        if line_size % 4 != 0:
+            line_size += 4 - line_size % 4
         # Set the seek direction based on whether the height value is negative or positive
         if height > 0:
             range1 = height - 1
