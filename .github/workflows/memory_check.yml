@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 Alec Delaney
+#
+# SPDX-License-Identifier: MIT
+
+name: Check memory of imports
+
+on: [pull_request]
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build simulator firmware
+        id: check-memory
+        uses: tekktrik/circuitpython-memory-check/prepare@main
+  check-memory-new:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Check memory for new changes
+        id: check-new
+        uses: tekktrik/circuitpython-memory-check/analyze@main
+        with:
+          results-filename: results.json
+  check-memory-prev:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Check memory for existing codebase
+        id: check-prev
+        uses: tekktrik/circuitpython-memory-check/analyze@main
+        with:
+          branch: main
+          results-filename: original_results.json
+  compare:
+    runs-on: ubuntu-latest
+    needs: [check-memory-new, check-memory-prev]
+    steps:
+      - name: Compare memory differences
+        uses: tekktrik/circuitpython-memory-check/compare@main
+        with:
+          results-filename: results.json
+          original-results-filename: original_results.json
+          analysis-results-filename: memory_analysis.txt
